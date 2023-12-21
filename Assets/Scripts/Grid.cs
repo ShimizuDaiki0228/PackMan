@@ -91,6 +91,14 @@ public class Grid : MonoBehaviour
         return _myGrid[gridX, gridZ];
     }
 
+    public Vector3 NextPathPoint(Node node)
+    {
+        int gridX = (int)(_xStart + node.PosX);
+        int gridZ = (int)(_zStart + node.PosZ);
+
+        return new Vector3(gridX, 0, gridZ);
+    }
+
     public List<Node> GetNeighborNodes(Node node)
     {
         List<Node> neighbours = new List<Node>();

@@ -7,10 +7,7 @@ public class PackManController : MonoBehaviour
 
     private const float SPEED = 5f;
 
-    private Vector3 _up = Vector3.zero;
-    private Vector3 _right = new Vector3(0, 90, 0);
-    private Vector3 _down = new Vector3(0, 180, 0);
-    private Vector3 _left = new Vector3(0, 270, 0);
+    
     
     private Vector3 _currentDirection = Vector3.zero;
 
@@ -31,7 +28,7 @@ public class PackManController : MonoBehaviour
 
     private void Reset()
     {
-        _currentDirection = _up;
+        _currentDirection = InGameConst.Up;
         _nextPos = Vector3.forward;
         _destination = transform.position;
     }
@@ -49,22 +46,22 @@ public class PackManController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             _nextPos = Vector3.forward;
-            _currentDirection = _up;
+            _currentDirection = InGameConst.Up;
         }
         else if(Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
             _nextPos = Vector3.back;
-            _currentDirection = _down;
+            _currentDirection = InGameConst.Down;
         }
         else if(Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             _nextPos = Vector3.left;
-            _currentDirection = _left;
+            _currentDirection = InGameConst.Left;
         }
         else if(Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
             _nextPos = Vector3.right;
-            _currentDirection = _right;
+            _currentDirection = InGameConst.Right;
         }
 
         if(Vector3.Distance(transform.position, _destination) < 0.0001f)

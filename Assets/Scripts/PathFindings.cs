@@ -1,11 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Schema;
+using TMPro.EditorUtilities;
 using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
 
 public class PathFindings : MonoBehaviour
 {
+    private enum Ghosts
+    {
+        BLINKY,
+        CLYDE,
+        INKY,
+        PINKY
+    }
+
+    [SerializeField]
+    private Ghosts _ghost;
+
+    [SerializeField]
+    private Transform _blinky;
+
     private List<Node> _path = new List<Node>();
 
     private int _distance = 10;
@@ -64,6 +79,22 @@ public class PathFindings : MonoBehaviour
     [SerializeField]
     private GhostStates _state;
 
+    private const float HOME_TIMER = 3f;
+    private float _currentTimer = 0f;
+
+    private const float SCATTER_TIMER = 7f;
+    private float _currentScatterTimer = 0f;
+    
+    private const float CHASE_TIMER = 20f;
+    private float _currentChaseTimer = 0f;
+
+    private const float FRIGHTEND_TIMER = 5f;
+    private float _currentFrightendTimer = 0f;
+
+    public int PointsToCollect;
+    [SerializeField]
+    private bool _released = false;
+
     private void Start()
     {
         _destination = transform.position;
@@ -81,7 +112,7 @@ public class PathFindings : MonoBehaviour
     private void Update()
     {
         CheckState();
-        //Move();
+        Timing();
     }
 
     private void FindThePath()
@@ -151,7 +182,12 @@ public class PathFindings : MonoBehaviour
         }
 
         _path.Reverse();
-        _grid.Path = _path;
+        
+        if(_ghost == Ghosts.CLYDE) _grid.ClydePath = _path;
+        else if(_ghost == Ghosts.BLINKY) _grid.BlinkyPath = _path;
+        else if(_ghost == Ghosts.INKY) _grid.InkyPath = _path;
+        else if(_ghost == Ghosts.PINKY) _grid.PinkyPath  = _path;
+
     }
 
     private int GetDistance(Node a, Node b)
@@ -242,9 +278,25 @@ public class PathFindings : MonoBehaviour
 
             case GhostStates.CHASE:
                 SetAppearance((int)Appearance.NORMAL);
-                _currentTarget = _packManTarget;
+                //_currentTarget = _packManTarget;
                 _speed = 3f;
-                Move();
+
+                if(_ghost == Ghosts.CLYDE)
+                {
+                    ClydeBehaviour();
+                }
+
+                if (_ghost == Ghosts.PINKY)
+                {
+                    PinkyBehaviour();
+                }
+
+                if(_ghost == Ghosts.INKY)
+                {
+                    InkyBehaviour();
+                }
+
+                    Move();
                 break;
 
             case GhostStates.SCATTER:
@@ -301,6 +353,7 @@ public class PathFindings : MonoBehaviour
         }
     }
 
+
     private void SetAppearance(int appearanceNumber)
     {
         _activeAppearanceNumber = appearanceNumber;
@@ -309,5 +362,116 @@ public class PathFindings : MonoBehaviour
         {
             _appearance[i].SetActive(i == _activeAppearanceNumber);
         }
+    }
+
+    private void Timing()
+    {
+        if(_state == GhostStates.HOME && _released)
+        {
+            _currentTimer += Time.deltaTime;
+            if(_currentTimer > HOME_TIMER)
+            {
+                _state = GhostStates.CHASE;
+                _currentTimer = 0;
+            }
+        }
+
+        if(_state == GhostStates.FRIGHTEND)
+        {
+            _currentFrightendTimer += Time.deltaTime;
+            if(_currentFrightendTimer > FRIGHTEND_TIMER)
+            {
+                if (_state == GhostStates.GOT_EATEN)
+                    return;
+
+                _state = GhostStates.CHASE;
+                _currentFrightendTimer = 0;
+            }
+        }
+
+        if(_state == GhostStates.CHASE)
+        {
+            _currentChaseTimer += Time.deltaTime;
+            if(_currentChaseTimer > CHASE_TIMER)
+            {
+                _state = GhostStates.SCATTER;
+                _currentChaseTimer = 0;
+            }
+        }
+        
+        if(_state == GhostStates.SCATTER)
+        {
+            _currentScatterTimer += Time.deltaTime;
+            if(_currentScatterTimer > SCATTER_TIMER)
+            {
+                _state = GhostStates.CHASE;
+                _currentScatterTimer = 0;
+            }
+        }
+    }
+    private void ClydeBehaviour()
+    {
+        if (Vector3.Distance(transform.position, _packManTarget.position) <= 8)
+        {
+            if (!_scatterTarget.Contains(_currentTarget))
+            {
+                _currentTarget = _scatterTarget[0];
+            }
+
+            for (int i = 0; i < _scatterTarget.Count; i++)
+            {
+                if (Vector3.Distance(transform.position, _scatterTarget[i].position) < 0.0001f && _currentTarget == _scatterTarget[i])
+                {
+                    _currentTarget = _scatterTarget[(i + 1) % _scatterTarget.Count];
+                }
+            }
+        }
+        else
+        {
+            _currentTarget = _packManTarget;
+        }
+    }
+
+    private void PinkyBehaviour()
+    {
+        Transform aheadTarget = new GameObject().transform;
+
+        int lookAhead = 4;
+        aheadTarget.position = _packManTarget.position + _packManTarget.transform.forward * lookAhead;
+        for (int i = lookAhead; i > 0; i--)
+        {
+            if(!_grid.CheckInsideGrid(aheadTarget.position))
+            {
+                lookAhead--;
+            }
+            else
+            {
+                break;
+            }
+        }
+        aheadTarget.position = _packManTarget.position + _packManTarget.transform.forward * lookAhead;
+        Debug.DrawLine(transform.position,aheadTarget.position);
+        _currentTarget = aheadTarget;
+        Destroy(aheadTarget.gameObject);
+    }
+
+    private void InkyBehaviour()
+    {
+        Transform blinkyToPackman = new GameObject().transform;
+        Transform target = new GameObject().transform;
+
+        blinkyToPackman.position = new Vector3(_packManTarget.position.x - _blinky.position.x,
+                                               0,
+                                               _packManTarget.position.z - _blinky.position.z);
+
+        target.position = new Vector3(_packManTarget.position.x + blinkyToPackman.position.x,
+                                      0,
+                                      _packManTarget.position.z + blinkyToPackman.position.z);
+
+        _currentTarget.position = _grid.GetNearestNonWallNode(target.position);
+        Debug.DrawLine(transform.position, _currentTarget.position);
+
+        Destroy(blinkyToPackman.gameObject);
+        Destroy(target.gameObject);
     }
 }

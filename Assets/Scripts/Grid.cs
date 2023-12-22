@@ -14,7 +14,10 @@ public class Grid : MonoBehaviour
 
     private Node[,] _myGrid;
 
-    public List<Node> Path;
+    public List<Node> ClydePath;
+    public List<Node> BlinkyPath;
+    public List<Node> InkyPath;
+    public List<Node> PinkyPath;
 
     [SerializeField]
     private LayerMask _unwalkable;
@@ -70,11 +73,35 @@ public class Grid : MonoBehaviour
             {
                 Gizmos.color = (node.Walkable) ? Color.white : Color.red;
 
-                if(Path != null)
+                if(ClydePath != null)
                 {
-                    if(Path.Contains(node))
+                    if(ClydePath.Contains(node))
                     {
-                        Gizmos.color = Color.green;
+                        Gizmos.color = Color.yellow;
+                    }
+                }
+                
+                if(BlinkyPath != null)
+                {
+                    if(BlinkyPath.Contains(node))
+                    {
+                        Gizmos.color = Color.blue;
+                    }
+                }
+                
+                if(InkyPath != null)
+                {
+                    if(InkyPath.Contains(node))
+                    {
+                        Gizmos.color = Color.cyan;
+                    }
+                }
+                
+                if(PinkyPath != null)
+                {
+                    if(PinkyPath.Contains(node))
+                    {
+                        Gizmos.color = Color.magenta;
                     }
                 }
 
@@ -135,5 +162,51 @@ public class Grid : MonoBehaviour
         }
 
         return neighbours;
+    }
+
+    public bool CheckInsideGrid(Vector3 requestedPosition)
+    {
+        int gridX = (int)(requestedPosition.x - _xStart);
+        int gridZ = (int)(requestedPosition.z - _zStart);
+
+        if(gridX > _hCells 
+           || gridX < 0 
+           || gridZ > _vCells
+           || gridZ < 0)
+        {
+            return false;
+        }
+
+        if (!NodeRequest(requestedPosition).Walkable)
+            return false;
+
+        return true;
+    }
+
+    public Vector3 GetNearestNonWallNode(Vector3 target)
+    {
+        float min = 1000;
+        int minIndexI = 0;
+        int minIndexJ = 0;
+
+        for(int i = 0; i < _hCells; i++)
+        {
+            for(int j = 0; j < _vCells; j++)
+            {
+                if (_myGrid[i, j].Walkable)
+                {
+                    Vector3 nextPosition = NextPathPoint(_myGrid[i, j]);
+                    float distance = Vector3.Distance(nextPosition, target);
+                    if(distance < min)
+                    {
+                        min = distance;
+                        minIndexI = i;
+                        minIndexJ = j;
+                    }
+                }
+            }
+        }
+
+        return NextPathPoint(_myGrid[minIndexI, minIndexJ]);
     }
 }

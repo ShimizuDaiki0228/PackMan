@@ -13,9 +13,6 @@ public class PackManController : MonoBehaviour
 
     private Vector3 _nextPos;
     private Vector3 _destination;
-    private Vector3 _direction;
-
-    private bool _canMove;
 
     [SerializeField]
     private LayerMask _unwalkableLayerMask;
@@ -80,8 +77,6 @@ public class PackManController : MonoBehaviour
                 if(MoveValid())
                 {
                     _destination = transform.position + _nextPos;
-                    _direction = _nextPos;
-                    //_canMove = true;
                 }
             }
         }
@@ -121,6 +116,7 @@ public class PackManController : MonoBehaviour
             else if(pGhost.State != GhostStates.FRIGHTEND && pGhost.State != GhostStates.GOT_EATEN)
             {
                 GameManager.Instance.LoseLife();
+                Reset();
             }
         }
     }

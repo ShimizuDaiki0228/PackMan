@@ -94,10 +94,13 @@ public class PathFindings : MonoBehaviour
 
     private void Start()
     {
+        
         _initPosition = transform.position;
         _initState = State;
         _destination = transform.position;
         _currentDirection = InGameConst.Up;
+
+        Debug.Log(_initState);
 
         foreach (var target in _scatterTarget)
         {

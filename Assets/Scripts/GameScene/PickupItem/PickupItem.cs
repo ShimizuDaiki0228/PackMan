@@ -25,6 +25,7 @@ public class PickupItem : MonoBehaviour
     {
         if(other.tag == "PackMan")
         {
+            
             GameManager.Instance.AddScore(_itemData.Score);
             Destroy(gameObject);
         }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
 
 using UnityEngine.SceneManagement;
 
@@ -8,9 +9,27 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    private static int _lifes;
-    private static int _score;
-    private static int _level = 1;
+    /// <summary>
+    /// ライフ
+    /// </summary>
+    private ReactiveProperty<int> _lifesProp;
+    public ReactiveProperty<int> LifeProp => _lifesProp;
+    private int Life => _lifesProp.Value;
+
+    /// <summary>
+    /// スコア
+    /// </summary>
+    private ReactiveProperty<int> _scoreProp;
+    public ReactiveProperty<int> ScoreProp => _scoreProp;
+    private int Score => _scoreProp.Value;
+    
+    /// <summary>
+    /// レベル
+    /// </summary>
+    private ReactiveProperty<int> _levelProp;
+    public ReactiveProperty<int> LevelProp => _levelProp;
+    private int Level => _levelProp.Value;
+
     private int _pelletAmount;
 
     [SerializeField]
@@ -32,6 +51,8 @@ public class GameManager : MonoBehaviour
     private const float FRIGHTEND_TIMER = 5f;
     private float _currentFrightendTimer = 0f;
 
+    private static bool _hasLost;
+
     private void Awake()
     {
         if (Instance == null)
@@ -45,13 +66,15 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject); 
         }
 
-        _lifes = 3;
+        _scoreProp = new ReactiveProperty<int>(0);
+        _levelProp = new ReactiveProperty<int>(0);
+        _lifesProp = new ReactiveProperty<int>(3);
         GhostList = _ghostList;
     }
 
     private void Start()
     {
-        _scatter = true;
+        //_scatter = true;
     }
 
     private void Update()
@@ -76,7 +99,7 @@ public class GameManager : MonoBehaviour
         foreach(var ghost in GhostList)
         {
             PathFindings pGhost = ghost.GetComponent<PathFindings>();
-            if(_score >= pGhost.PointsToCollect && !pGhost.Released)
+            if(Score >= pGhost.PointsToCollect && !pGhost.Released)
             {
                 pGhost.State = GhostStates.CHASE;
                 pGhost.Released = true;
@@ -164,35 +187,46 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        _level++;
+        if(_hasLost)
+        {
+            _scoreProp.Value = 0;
+            _lifesProp.Value = 3;
+            _levelProp.Value = 1;
+            _hasLost = false;
+        }
+
+        _scatter = true;
+        _levelProp.Value++;
         _packMan = GameObject.FindGameObjectWithTag("PackMan");
 
-        if(_score >= (_level - 1) * 3000)
+        if(Level != 1 && Score >= (Level - 1) * 3000)
         {
-            _lifes++;
+            _lifesProp.Value++;
         }
     }
 
     public void LoseLife()
     {
-        _lifes--;
-        if(_lifes <= 0)
+        _lifesProp.Value--;
+        if(Life <= 0)
         {
-            ScoreController.Level = _level;
-            ScoreController.Score = _score;
+            _hasLost = true;
+
+            ScoreController.Level = Level;
+            ScoreController.Score = Score;
 
             SceneManager.LoadScene("GameOverScene");
             return;
         }
 
-        //foreach(GameObject ghost in GhostList)
-        //{
-        //    ghost.GetComponent<PathFindings>().Reset();
-        //}
+        foreach (GameObject ghost in GhostList)
+        {
+            ghost.GetComponent<PathFindings>().Reset();
+        }
     }
 
     public void AddScore(int addScore)
     {
-        _score += addScore;
+        _scoreProp.Value += addScore;
     }
 }

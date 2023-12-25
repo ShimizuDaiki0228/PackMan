@@ -9,9 +9,6 @@ public class Grid : MonoBehaviour
     [SerializeField]
     private GameObject _bottomLeft, _topRight;
 
-    //デバッグ
-    public GameObject Start, Goal;
-
     private Node[,] _myGrid;
 
     public List<Node> ClydePath;

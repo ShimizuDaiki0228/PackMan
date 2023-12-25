@@ -20,14 +20,22 @@ public class PackManController : MonoBehaviour
     [SerializeField]
     private LayerMask _unwalkableLayerMask;
 
+    /// <summary>
+    /// ƒŠƒZƒbƒg
+    /// </summary>
+    private Vector3 _initPosition;
+
     // Start is called before the first frame update
     void Start()
     {
+        _initPosition = transform.position;
+
         Reset();
     }
 
-    private void Reset()
+    public void Reset()
     {
+        transform.position = _initPosition;
         _currentDirection = InGameConst.Up;
         _nextPos = Vector3.forward;
         _destination = transform.position;
@@ -98,5 +106,22 @@ public class PackManController : MonoBehaviour
         }
 
         return true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Ghost")
+        {
+            PathFindings pGhost = other.GetComponent<PathFindings>();
+            if(pGhost.State == GhostStates.FRIGHTEND)
+            {
+                pGhost.State = GhostStates.GOT_EATEN;
+                GameManager.Instance.AddScore(400);
+            }
+            else if(pGhost.State != GhostStates.FRIGHTEND && pGhost.State != GhostStates.GOT_EATEN)
+            {
+                GameManager.Instance.LoseLife();
+            }
+        }
     }
 }

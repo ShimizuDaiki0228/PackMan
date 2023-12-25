@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7510782230050381693}
   m_Layer: 0
   m_Name: Clyde
-  m_TagString: Untagged
+  m_TagString: Ghost
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -70,6 +70,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ghost: 1
+  _blinky: {fileID: 0}
   _grid: {fileID: 0}
   _packManTarget: {fileID: 0}
   _homeTarget:
@@ -84,9 +85,9 @@ MonoBehaviour:
   - {fileID: 7347286864254924057}
   - {fileID: 1680846272400401283}
   - {fileID: 1868996526625588241}
-  _state: 0
-  PointsToCollect: 0
-  _released: 1
+  State: 0
+  PointsToCollect: 20
+  Released: 0
 --- !u!1001 &1680846272400368931
 PrefabInstance:
   m_ObjectHideFlags: 0

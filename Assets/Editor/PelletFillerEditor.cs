@@ -39,13 +39,8 @@ public class PelletFillerEditor : Editor
                 {
                     for (int j = 0; j < filler.VCells; j++)
                     {
-                        if (!Physics.CheckSphere(new Vector3(filler.BottomLeft.transform.position.x + i, filler.BottomLeft.transform.position.y, filler.BottomLeft.transform.position.z + j), 0.4f, filler.Unwalkable))
+                        if (!Physics.CheckSphere(new Vector3(filler.BottomLeft.transform.position.x + i, filler.BottomLeft.transform.position.y, filler.BottomLeft.transform.position.z + j), 0.4f))
                         {
-                            //GameObject pellet = Instantiate(PelletPrefab,
-                            //                                new Vector3(filler.BottomLeft.transform.position.x + i, filler.BottomLeft.transform.position.y, filler.BottomLeft.transform.position.z + j),
-                            //                                Quaternion.identity,
-                            //                                _pelletHolder);
-
                             GameObject pellet = PrefabUtility.InstantiatePrefab(myPrefab) as GameObject;
                             pellet.transform.position = new Vector3(filler.BottomLeft.transform.position.x + i, filler.BottomLeft.transform.position.y, filler.BottomLeft.transform.position.z + j);
                             pellet.transform.parent = filler.PelletHolder;

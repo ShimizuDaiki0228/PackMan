@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6494260372095685701}
   m_Layer: 0
   m_Name: Inky
-  m_TagString: Untagged
+  m_TagString: Ghost
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -70,6 +70,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ghost: 2
+  _blinky: {fileID: 0}
   _grid: {fileID: 0}
   _packManTarget: {fileID: 0}
   _homeTarget:
@@ -84,9 +85,9 @@ MonoBehaviour:
   - {fileID: 3792242329027856801}
   - {fileID: 7960565707302581073}
   - {fileID: 3393040868092669763}
-  _state: 0
-  PointsToCollect: 0
-  _released: 1
+  State: 0
+  PointsToCollect: 120
+  Released: 0
 --- !u!1001 &3393040868092570083
 PrefabInstance:
   m_ObjectHideFlags: 0

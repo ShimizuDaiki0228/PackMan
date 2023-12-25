@@ -5,6 +5,22 @@ using TMPro.EditorUtilities;
 using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
 
+
+/// <summary>
+/// ステートマシン
+/// </summary>
+public enum GhostStates
+{
+    HOME,
+    LEAVING_HOME,
+    CHASE,
+    SCATTER,
+    FRIGHTEND,
+    GOT_EATEN
+}
+
+
+
 public class PathFindings : MonoBehaviour
 {
     private enum Ghosts
@@ -48,18 +64,7 @@ public class PathFindings : MonoBehaviour
 
     private Node _lastVisitedNode;
 
-    /// <summary>
-    /// ステートマシン
-    /// </summary>
-    private enum GhostStates
-    {
-        HOME,
-        LEAVING_HOME,
-        CHASE,
-        SCATTER,
-        FRIGHTEND,
-        GOT_EATEN
-    }
+    
 
     /// <summary>
     /// 見た目
@@ -76,30 +81,25 @@ public class PathFindings : MonoBehaviour
     private GameObject[] _appearance;
 
 
-    [SerializeField]
-    private GhostStates _state;
+    public GhostStates State;
 
     private const float HOME_TIMER = 3f;
     private float _currentTimer = 0f;
 
-    private const float SCATTER_TIMER = 7f;
-    private float _currentScatterTimer = 0f;
-    
-    private const float CHASE_TIMER = 20f;
-    private float _currentChaseTimer = 0f;
-
-    private const float FRIGHTEND_TIMER = 5f;
-    private float _currentFrightendTimer = 0f;
-
     public int PointsToCollect;
-    [SerializeField]
-    private bool _released = false;
+    public bool Released = false;
+
+    private static Vector3 _initPosition;
+    private static GhostStates _initState;
 
     private void Start()
     {
+        _initPosition = transform.position;
+        _initState = State;
         _destination = transform.position;
         _currentDirection = InGameConst.Up;
-        foreach(var target in _scatterTarget)
+
+        foreach (var target in _scatterTarget)
         {
             target.GetComponent<MeshRenderer>().enabled = false;
         }
@@ -112,7 +112,6 @@ public class PathFindings : MonoBehaviour
     private void Update()
     {
         CheckState();
-        Timing();
     }
 
     private void FindThePath()
@@ -223,7 +222,6 @@ public class PathFindings : MonoBehaviour
     /// </summary>
     private void SetDirection()
     {
-        Debug.Log("Set");
         int dirX = (int)(_nextPos.x - transform.position.x);
         int dirZ = (int)(_nextPos.z - transform.position.z);
 
@@ -251,7 +249,7 @@ public class PathFindings : MonoBehaviour
 
     private void CheckState()
     {
-        switch(_state)
+        switch(State)
         {
             case GhostStates.HOME:
                 SetAppearance((int)Appearance.NORMAL);
@@ -269,6 +267,17 @@ public class PathFindings : MonoBehaviour
                         _currentTarget = _homeTarget[(i + 1) % _homeTarget.Count];
                     }
                 }
+
+                if(Released)
+                {
+                    _currentTimer += Time.deltaTime;
+                    if( _currentTimer >= HOME_TIMER)
+                    {
+                        _currentTimer = 0;
+                        State = GhostStates.CHASE;
+                    }
+                }
+
                 Move();
                 break;
 
@@ -278,7 +287,7 @@ public class PathFindings : MonoBehaviour
 
             case GhostStates.CHASE:
                 SetAppearance((int)Appearance.NORMAL);
-                //_currentTarget = _packManTarget;
+                _currentTarget = _packManTarget;
                 _speed = 3f;
 
                 if(_ghost == Ghosts.CLYDE)
@@ -345,7 +354,7 @@ public class PathFindings : MonoBehaviour
 
                 if (Vector3.Distance(transform.position, _homeTarget[0].position) < 0.0001f)
                 {
-                    _state = GhostStates.HOME;
+                    State = GhostStates.HOME;
                 }
                 Move();
 
@@ -364,51 +373,6 @@ public class PathFindings : MonoBehaviour
         }
     }
 
-    private void Timing()
-    {
-        if(_state == GhostStates.HOME && _released)
-        {
-            _currentTimer += Time.deltaTime;
-            if(_currentTimer > HOME_TIMER)
-            {
-                _state = GhostStates.CHASE;
-                _currentTimer = 0;
-            }
-        }
-
-        if(_state == GhostStates.FRIGHTEND)
-        {
-            _currentFrightendTimer += Time.deltaTime;
-            if(_currentFrightendTimer > FRIGHTEND_TIMER)
-            {
-                if (_state == GhostStates.GOT_EATEN)
-                    return;
-
-                _state = GhostStates.CHASE;
-                _currentFrightendTimer = 0;
-            }
-        }
-
-        if(_state == GhostStates.CHASE)
-        {
-            _currentChaseTimer += Time.deltaTime;
-            if(_currentChaseTimer > CHASE_TIMER)
-            {
-                _state = GhostStates.SCATTER;
-                _currentChaseTimer = 0;
-            }
-        }
-        
-        if(_state == GhostStates.SCATTER)
-        {
-            _currentScatterTimer += Time.deltaTime;
-            if(_currentScatterTimer > SCATTER_TIMER)
-            {
-                _state = GhostStates.CHASE;
-                _currentScatterTimer = 0;
-            }
-        }
-    }
     private void ClydeBehaviour()
     {
         if (Vector3.Distance(transform.position, _packManTarget.position) <= 8)
@@ -459,6 +423,7 @@ public class PathFindings : MonoBehaviour
     {
         Transform blinkyToPackman = new GameObject().transform;
         Transform target = new GameObject().transform;
+        Transform goal = new GameObject().transform;
 
         blinkyToPackman.position = new Vector3(_packManTarget.position.x - _blinky.position.x,
                                                0,
@@ -468,10 +433,23 @@ public class PathFindings : MonoBehaviour
                                       0,
                                       _packManTarget.position.z + blinkyToPackman.position.z);
 
-        _currentTarget.position = _grid.GetNearestNonWallNode(target.position);
+        goal.position = _grid.GetNearestNonWallNode(target.position);
+        _currentTarget = goal;
         Debug.DrawLine(transform.position, _currentTarget.position);
 
         Destroy(blinkyToPackman.gameObject);
         Destroy(target.gameObject);
+        Destroy(goal.gameObject);
+    }
+
+    public void Reset()
+    {
+        Debug.Log("Reset");
+        Debug.Log(_initState);
+        transform.position = _initPosition;
+        State = _initState;
+
+        _destination = transform.position;
+        _currentDirection = InGameConst.Up;
     }
 }

@@ -4,7 +4,7 @@ using System.Xml.Schema;
 using TMPro.EditorUtilities;
 using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
-
+using UniRx;
 
 /// <summary>
 /// ステートマシン
@@ -19,41 +19,38 @@ public enum GhostStates
     GOT_EATEN
 }
 
-
+public enum Ghosts
+{
+    BLINKY,
+    CLYDE,
+    INKY,
+    PINKY
+}
 
 public class PathFindings : MonoBehaviour
 {
-    private enum Ghosts
-    {
-        BLINKY,
-        CLYDE,
-        INKY,
-        PINKY
-    }
+    /// <summary>
+    /// ゴーストのタイプ
+    /// </summary>
+    protected Ghosts _ghost;
 
-    [SerializeField]
-    private Ghosts _ghost;
-
-    [SerializeField]
-    private Transform _blinky;
-
-    private List<Node> _path = new List<Node>();
+    protected List<Node> _path = new List<Node>();
 
     private int _distance = 10;
 
     [SerializeField]
-    private Grid _grid;
+    protected Grid _grid;
 
-    private Transform _currentTarget;
+    protected Transform _currentTarget;
 
     [SerializeField]
-    private Transform _packManTarget;
+    protected Transform _packManTarget;
 
     [SerializeField]
     private List<Transform> _homeTarget = new List<Transform>();
 
     [SerializeField]
-    private List<Transform> _scatterTarget = new List<Transform>();
+    protected List<Transform> _scatterTarget = new List<Transform>();
 
     private Vector3 _nextPos;
     private Vector3 _destination;
@@ -92,15 +89,14 @@ public class PathFindings : MonoBehaviour
     private static Vector3 _initPosition;
     private static GhostStates _initState;
 
-    private void Start()
+    protected virtual void Start()
     {
         
+
         _initPosition = transform.position;
         _initState = State;
         _destination = transform.position;
         _currentDirection = InGameConst.Up;
-
-        Debug.Log(_initState);
 
         foreach (var target in _scatterTarget)
         {
@@ -112,12 +108,15 @@ public class PathFindings : MonoBehaviour
         }
     }
 
-    private void Update()
+    /// <summary>
+    /// 手動Update
+    /// </summary>
+    public void ManualUpdate(float deltaTime)
     {
         CheckState();
     }
 
-    private void FindThePath()
+    protected virtual void FindThePath()
     {
         Node startNode = _grid.NodeRequest(transform.position);
         Node goalNode = _grid.NodeRequest(_currentTarget.position);
@@ -170,7 +169,7 @@ public class PathFindings : MonoBehaviour
         }
     }
 
-    private void PathTracer(Node startNode, Node goalNode)
+    protected virtual void PathTracer(Node startNode, Node goalNode)
     {
         _lastVisitedNode = startNode;
         _path.Clear();
@@ -184,11 +183,6 @@ public class PathFindings : MonoBehaviour
         }
 
         _path.Reverse();
-        
-        if(_ghost == Ghosts.CLYDE) _grid.ClydePath = _path;
-        else if(_ghost == Ghosts.BLINKY) _grid.BlinkyPath = _path;
-        else if(_ghost == Ghosts.INKY) _grid.InkyPath = _path;
-        else if(_ghost == Ghosts.PINKY) _grid.PinkyPath  = _path;
 
     }
 
@@ -250,7 +244,7 @@ public class PathFindings : MonoBehaviour
         }
     }
 
-    private void CheckState()
+    protected virtual void CheckState()
     {
         switch(State)
         {
@@ -258,18 +252,8 @@ public class PathFindings : MonoBehaviour
                 SetAppearance((int)Appearance.NORMAL);
                 _speed = 1.5f;
 
-                if (!_homeTarget.Contains(_currentTarget))
-                {
-                    _currentTarget = _homeTarget[0];
-                }
-
-                for (int i = 0; i < _homeTarget.Count; i++)
-                {
-                    if (Vector3.Distance(transform.position, _homeTarget[i].position) < 0.0001f && _currentTarget == _homeTarget[i])
-                    {
-                        _currentTarget = _homeTarget[(i + 1) % _homeTarget.Count];
-                    }
-                }
+                TargetContainsCheck(_homeTarget);
+                SetTarget(_homeTarget);
 
                 if(Released)
                 {
@@ -293,39 +277,16 @@ public class PathFindings : MonoBehaviour
                 _currentTarget = _packManTarget;
                 _speed = 3f;
 
-                if(_ghost == Ghosts.CLYDE)
-                {
-                    ClydeBehaviour();
-                }
-
-                if (_ghost == Ghosts.PINKY)
-                {
-                    PinkyBehaviour();
-                }
-
-                if(_ghost == Ghosts.INKY)
-                {
-                    InkyBehaviour();
-                }
-
-                    Move();
+                Move();
                 break;
 
             case GhostStates.SCATTER:
                 SetAppearance((int)Appearance.NORMAL);
                 _speed = 3f;
-                if(!_scatterTarget.Contains(_currentTarget))
-                {
-                    _currentTarget = _scatterTarget[0];
-                }
 
-                for(int i = 0; i < _scatterTarget.Count; i++)
-                {
-                    if (Vector3.Distance(transform.position, _scatterTarget[i].position) < 0.0001f && _currentTarget == _scatterTarget[i])
-                    {
-                        _currentTarget = _scatterTarget[(i+1) % _scatterTarget.Count];
-                    }
-                }
+                TargetContainsCheck(_scatterTarget);
+                SetTarget(_scatterTarget);
+
                 Move();
 
                 break;
@@ -334,18 +295,8 @@ public class PathFindings : MonoBehaviour
                 SetAppearance((int)Appearance.FRIGHTEND);
                 _speed = 1.5f;
 
-                if (!_homeTarget.Contains(_currentTarget))
-                {
-                    _currentTarget = _homeTarget[0];
-                }
-
-                for (int i = 0; i < _homeTarget.Count; i++)
-                {
-                    if (Vector3.Distance(transform.position, _homeTarget[i].position) < 0.0001f && _currentTarget == _homeTarget[i])
-                    {
-                        _currentTarget = _homeTarget[(i + 1) % _homeTarget.Count];
-                    }
-                }
+                TargetContainsCheck(_homeTarget);
+                SetTarget(_homeTarget);
 
                 Move();
                 break;
@@ -365,7 +316,37 @@ public class PathFindings : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 現在のターゲットが対象となるターゲットのリストの要素のどれかと一致しているか
+    /// 一致している場合、現在の状態に対して正しく動けているということになる
+    /// </summary>
+    /// <param name="targetList">対象となるターゲットのTransformリスト</param>
+    private void TargetContainsCheck(List<Transform> targetList)
+    {
+        if (!targetList.Contains(_currentTarget))
+        {
+            _currentTarget = targetList[0];
+        }
+    }
 
+    /// <summary>
+    /// 現在のターゲットを設定する
+    /// </summary>
+    private void SetTarget(List<Transform> targetList)
+    {
+        for (int i = 0; i < targetList.Count; i++)
+        {
+            if (Vector3.Distance(transform.position, targetList[i].position) < 0.0001f && _currentTarget == targetList[i])
+            {
+                _currentTarget = targetList[(i + 1) % targetList.Count];
+            }
+        }
+    }
+
+    /// <summary>
+    /// 見た目を変更する
+    /// </summary>
+    /// <param name="appearanceNumber">見た目の番号</param>
     private void SetAppearance(int appearanceNumber)
     {
         _activeAppearanceNumber = appearanceNumber;
@@ -376,79 +357,11 @@ public class PathFindings : MonoBehaviour
         }
     }
 
-    private void ClydeBehaviour()
+    /// <summary>
+    /// リセット
+    /// </summary>
+    public virtual void Reset()
     {
-        if (Vector3.Distance(transform.position, _packManTarget.position) <= 8)
-        {
-            if (!_scatterTarget.Contains(_currentTarget))
-            {
-                _currentTarget = _scatterTarget[0];
-            }
-
-            for (int i = 0; i < _scatterTarget.Count; i++)
-            {
-                if (Vector3.Distance(transform.position, _scatterTarget[i].position) < 0.0001f && _currentTarget == _scatterTarget[i])
-                {
-                    _currentTarget = _scatterTarget[(i + 1) % _scatterTarget.Count];
-                }
-            }
-        }
-        else
-        {
-            _currentTarget = _packManTarget;
-        }
-    }
-
-    private void PinkyBehaviour()
-    {
-        Transform aheadTarget = new GameObject().transform;
-
-        int lookAhead = 4;
-        aheadTarget.position = _packManTarget.position + _packManTarget.transform.forward * lookAhead;
-        for (int i = lookAhead; i > 0; i--)
-        {
-            if(!_grid.CheckInsideGrid(aheadTarget.position))
-            {
-                lookAhead--;
-            }
-            else
-            {
-                break;
-            }
-        }
-        aheadTarget.position = _packManTarget.position + _packManTarget.transform.forward * lookAhead;
-        Debug.DrawLine(transform.position,aheadTarget.position);
-        _currentTarget = aheadTarget;
-        Destroy(aheadTarget.gameObject);
-    }
-
-    private void InkyBehaviour()
-    {
-        Transform blinkyToPackman = new GameObject().transform;
-        Transform target = new GameObject().transform;
-        Transform goal = new GameObject().transform;
-
-        blinkyToPackman.position = new Vector3(_packManTarget.position.x - _blinky.position.x,
-                                               0,
-                                               _packManTarget.position.z - _blinky.position.z);
-
-        target.position = new Vector3(_packManTarget.position.x + blinkyToPackman.position.x,
-                                      0,
-                                      _packManTarget.position.z + blinkyToPackman.position.z);
-
-        goal.position = _grid.GetNearestNonWallNode(target.position);
-        _currentTarget = goal;
-        Debug.DrawLine(transform.position, _currentTarget.position);
-
-        Destroy(blinkyToPackman.gameObject);
-        Destroy(target.gameObject);
-        Destroy(goal.gameObject);
-    }
-
-    public void Reset()
-    {
-        Debug.Log("Reset");
-        Debug.Log(_initState);
         transform.position = _initPosition;
         State = _initState;
 

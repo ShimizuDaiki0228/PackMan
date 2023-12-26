@@ -1,13 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 
 public class PackManController : MonoBehaviour
 {
 
     private const float SPEED = 5f;
-
-    
     
     private Vector3 _currentDirection = Vector3.zero;
 
@@ -21,6 +21,12 @@ public class PackManController : MonoBehaviour
     /// リセット
     /// </summary>
     private Vector3 _initPosition;
+
+    /// <summary>
+    /// リセットされることを知らせるオブザーバー
+    /// </summary>
+    private Subject<Unit> _onResetSubject = new Subject<Unit>();
+    public IObservable<Unit> OnResetAsObservable => _onResetSubject.AsObservable();
 
     // Start is called before the first frame update
     void Start()
@@ -38,15 +44,18 @@ public class PackManController : MonoBehaviour
         _destination = transform.position;
     }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary>
+    /// 手動Update
+    /// </summary>
+    /// <param name="deltaTime"></param>
+    public void ManualUpdate(float deltaTime)
     {
-        Move();
+        Move(deltaTime);
     }
 
-    private void Move()
+    private void Move(float deltaTime)
     {
-        transform.position = Vector3.MoveTowards(transform.position, _destination, SPEED * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, _destination, SPEED * deltaTime);
 
         if(Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -117,6 +126,7 @@ public class PackManController : MonoBehaviour
             {
                 GameManager.Instance.LoseLife();
                 Reset();
+                _onResetSubject.OnNext(Unit.Default);
             }
         }
     }

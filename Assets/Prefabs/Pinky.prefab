@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3175461358331951328}
   - component: {fileID: 4089102590978423431}
-  - component: {fileID: 4879477574107812070}
+  - component: {fileID: 7376306872206496275}
   m_Layer: 0
   m_Name: Pinky
   m_TagString: Ghost
@@ -34,7 +34,7 @@ Transform:
   - {fileID: 9169930974404755950}
   - {fileID: 7498535525082266415}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &4089102590978423431
 SphereCollider:
@@ -57,7 +57,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!114 &4879477574107812070
+--- !u!114 &7376306872206496275
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -66,11 +66,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4018615839355720868}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccf5c0e328805394ba52d7181d3bac5f, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d385ff0b322c84409643e828d64b0b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ghost: 3
-  _blinky: {fileID: 0}
   _grid: {fileID: 0}
   _packManTarget: {fileID: 0}
   _homeTarget:

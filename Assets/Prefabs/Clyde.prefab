@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6365107141901547488}
   - component: {fileID: 1289754325224825781}
-  - component: {fileID: 7510782230050381693}
+  - component: {fileID: 738443921062328634}
   m_Layer: 0
   m_Name: Clyde
   m_TagString: Ghost
@@ -34,7 +34,7 @@ Transform:
   - {fileID: 1680846272399982499}
   - {fileID: 1868996526625429553}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &1289754325224825781
 SphereCollider:
@@ -57,7 +57,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!114 &7510782230050381693
+--- !u!114 &738443921062328634
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -66,11 +66,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1904229645848347862}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccf5c0e328805394ba52d7181d3bac5f, type: 3}
+  m_Script: {fileID: 11500000, guid: f95a96ceb5622aa4a90d819b5b86a74c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ghost: 1
-  _blinky: {fileID: 0}
   _grid: {fileID: 0}
   _packManTarget: {fileID: 0}
   _homeTarget:

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6909663544860563066}
   - component: {fileID: 5484719165655429691}
-  - component: {fileID: 6494260372095685701}
+  - component: {fileID: 6405749765029731436}
   m_Layer: 0
   m_Name: Inky
   m_TagString: Ghost
@@ -34,7 +34,7 @@ Transform:
   - {fileID: 7960565707302416241}
   - {fileID: 3393040868092703587}
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &5484719165655429691
 SphereCollider:
@@ -57,7 +57,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!114 &6494260372095685701
+--- !u!114 &6405749765029731436
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -66,11 +66,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7399270443119426542}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccf5c0e328805394ba52d7181d3bac5f, type: 3}
+  m_Script: {fileID: 11500000, guid: 87eb9aba2e97d604dad6095cfec0e139, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ghost: 2
-  _blinky: {fileID: 0}
   _grid: {fileID: 0}
   _packManTarget: {fileID: 0}
   _homeTarget:
@@ -88,6 +86,7 @@ MonoBehaviour:
   State: 0
   PointsToCollect: 120
   Released: 0
+  _blinky: {fileID: 0}
 --- !u!1001 &3393040868092570083
 PrefabInstance:
   m_ObjectHideFlags: 0

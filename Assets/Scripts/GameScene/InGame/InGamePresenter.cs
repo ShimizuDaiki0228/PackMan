@@ -66,7 +66,7 @@ public class InGamePresenter : MonoBehaviour
     /// リセット
     /// パックマンが敵に当たったときに呼ばれる
     /// </summary>
-    private async void Reset()
+    private void Reset()
     {
         _view.ResetView();
     }

@@ -53,7 +53,7 @@ public class PathFindings : MonoBehaviour
     protected List<Transform> _scatterTarget = new List<Transform>();
 
     private Vector3 _nextPos;
-    private Vector3 _destination;
+    protected Vector3 _destination;
 
     private Vector3 _currentDirection = Vector3.zero;
 
@@ -86,8 +86,8 @@ public class PathFindings : MonoBehaviour
     public int PointsToCollect;
     public bool Released = false;
 
-    private static Vector3 _initPosition;
-    private static GhostStates _initState;
+    private Vector3 _initPosition;
+    private GhostStates _initState;
 
     protected virtual void Start()
     {
@@ -365,7 +365,12 @@ public class PathFindings : MonoBehaviour
         transform.position = _initPosition;
         State = _initState;
 
-        _destination = transform.position;
+        //Ç±ÇÃÇÊÇ§Ç…ÇµÇ»Ç¢Ç∆ç≈èâÇÃãììÆÇ™ÉoÉOÇÈ
+        if(State != GhostStates.HOME)
+            _destination = transform.position;
+
         _currentDirection = InGameConst.Up;
+
+        transform.localEulerAngles = new Vector3(0, 0, 0);
     }
 }

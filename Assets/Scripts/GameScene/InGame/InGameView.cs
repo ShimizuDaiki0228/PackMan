@@ -30,6 +30,7 @@ public class InGameView : MonoBehaviour
 
     public async void ResetView()
     {
+        _canStartProp.Value = false;
         UIExtension.TextVisibleSetting(_readyText, 1.0f);
 
         await UniTask.WaitForSeconds(2.0f);

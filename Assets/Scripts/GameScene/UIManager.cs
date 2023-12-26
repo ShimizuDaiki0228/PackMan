@@ -8,8 +8,6 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager Instance;
-
     [SerializeField]
     private Text _scoreText;
     [SerializeField]
@@ -17,23 +15,24 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Text _lifesText;
 
-    private void Awake()
-    {
-        if(Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            SceneManager.sceneLoaded += OnSceneLoaded;
-        }
-        else if(this != Instance)
-        {
-            Destroy(gameObject);
-        }
-    }
-
     private void Start()
     {
-        
+        GameManager.Instance.ScoreProp
+            .Subscribe(score =>
+            {
+                _scoreText.text = "Score : " + score.ToString();
+            }
+            ).AddTo(this);
+
+        GameManager.Instance.LevelProp
+            .Subscribe(level =>
+                _levelText.text = "Level : " + level.ToString()
+            ).AddTo(this);
+
+        GameManager.Instance.LifeProp
+            .Subscribe(life =>
+                _lifesText.text = "Life : " + life.ToString()
+            ).AddTo(this);
     }
 
     /// <summary>

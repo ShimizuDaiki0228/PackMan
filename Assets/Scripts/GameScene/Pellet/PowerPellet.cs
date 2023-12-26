@@ -16,7 +16,7 @@ public class PowerPellet : MonoBehaviour
         if(other.tag == "PackMan")
         {
             GameManager.Instance.ReducePellet(_score);
-            GameManager.Instance.Frighten = true;
+            GameManager.Instance.FrightenProp.Value = true;
             Destroy(gameObject);
         }
     }

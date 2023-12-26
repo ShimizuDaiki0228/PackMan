@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class PackManController : MonoBehaviour
 {
-
     private const float SPEED = 5f;
     
     private Vector3 _currentDirection = Vector3.zero;
@@ -126,7 +125,10 @@ public class PackManController : MonoBehaviour
             {
                 GameManager.Instance.LoseLife();
                 Reset();
-                _onResetSubject.OnNext(Unit.Default);
+
+                //ライフが0でない場合は再度リスタートする際のテキストを表示する
+                if (GameManager.Instance.Life != 0)
+                    _onResetSubject.OnNext(Unit.Default);
             }
         }
     }

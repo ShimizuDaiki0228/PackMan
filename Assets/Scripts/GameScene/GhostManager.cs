@@ -55,9 +55,11 @@ public class GhostManager : MonoBehaviour
         GameManager.Instance.ScoreProp
             .Subscribe(GhostRelease).AddTo(this);
 
-        GameManager.Instance.FrightenProp
-            .Subscribe(frighten =>
-                _frighten = frighten
+        GameManager.Instance.OnFrightenAsObservable
+            .Subscribe(_ =>
+            {
+                _frighten = true;
+            }
             ).AddTo(this);
 
         GameManager.Instance.OnGhostResetAsObservable

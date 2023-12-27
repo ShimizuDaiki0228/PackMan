@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 
 public class PowerPellet : MonoBehaviour
@@ -16,7 +17,7 @@ public class PowerPellet : MonoBehaviour
         if(other.tag == "PackMan")
         {
             GameManager.Instance.ReducePellet(_score);
-            GameManager.Instance.FrightenProp.Value = true;
+            GameManager.Instance.OnFrightenSubject.OnNext(Unit.Default);
             Destroy(gameObject);
         }
     }

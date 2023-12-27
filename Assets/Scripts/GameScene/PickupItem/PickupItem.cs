@@ -12,22 +12,11 @@ public class PickupItem : MonoBehaviour
     /// <summary>
     /// Žæ“¾‚µ‚½‚Æ‚«‚É“ü‚éƒXƒRƒA
     /// </summary>
-    [SerializeField]
-    private ItemData _itemData;
+    public ItemData ItemData;
 
     // Start is called before the first frame update
     void Start()
     {
         Destroy(gameObject, DESTROY_TIME);
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.tag == "PackMan")
-        {
-            
-            GameManager.Instance.AddScore(_itemData.Score);
-            Destroy(gameObject);
-        }
     }
 }

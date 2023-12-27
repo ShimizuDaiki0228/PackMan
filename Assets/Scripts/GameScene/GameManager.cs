@@ -36,10 +36,11 @@ public class GameManager : MonoBehaviour
     private int _pelletAmount;
 
     /// <summary>
-    /// Frighten状態かどうかのプロパティ
+    /// Frighten状態かどうかを監視するオブザーバー
     /// PowerPelletスクリプトより変更を受けるためpublicにしている
     /// </summary>
-    public ReactiveProperty<bool> FrightenProp;
+    public Subject<Unit> OnFrightenSubject = new Subject<Unit>();
+    public IObservable<Unit> OnFrightenAsObservable => OnFrightenSubject.AsObservable();
 
     /// <summary>
     /// 敵の情報をリセットする
@@ -64,8 +65,6 @@ public class GameManager : MonoBehaviour
         _scoreProp = new ReactiveProperty<int>(0);
         _levelProp = new ReactiveProperty<int>(0);
         _lifesProp = new ReactiveProperty<int>(2);
-
-        FrightenProp = new ReactiveProperty<bool>(false);
     }
 
     /// <summary>

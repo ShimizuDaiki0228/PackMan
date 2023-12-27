@@ -5,9 +5,13 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class PackManController : MonoBehaviour
 {
+    [SerializeField]
+    private Camera _mainCamera;
+
     private const float SPEED = 5f;
     
     private Vector3 _currentDirection = Vector3.zero;
@@ -39,6 +43,17 @@ public class PackManController : MonoBehaviour
     /// 敵に当たったかどうか
     /// </summary>
     public bool IsEnemyHit;
+
+    /// <summary>
+    /// アイテムや怯え状態の敵に触れた時に取得する点数を表示するテキスト
+    /// </summary>
+    [SerializeField]
+    private Text _getScoreText;
+
+    /// <summary>
+    /// _getScoreTextを表示する位置の調整
+    /// </summary>
+    private readonly Vector3 _getScoreTextPositionOffset = new Vector3(0, 2, 0);
 
     /// <summary>
     /// 敵に当たって何秒後に消えるようにするか
@@ -78,6 +93,17 @@ public class PackManController : MonoBehaviour
     public void ManualUpdate(float deltaTime)
     {
         Move(deltaTime);
+
+        if(Input.GetKeyDown(KeyCode.Space) )
+        {
+            Vector3 textPosition = transform.position + new Vector3(0, 2, 0);
+
+            // 3Dオブジェクトの位置をスクリーン座標に変換
+            Vector3 screenPos = _mainCamera.WorldToScreenPoint(textPosition);
+
+            // UIテキストの位置を更新
+            _getScoreText.transform.position = screenPos;
+        }
     }
 
     private void Move(float deltaTime)
@@ -147,6 +173,8 @@ public class PackManController : MonoBehaviour
             {
                 pGhost.State = GhostStates.GOT_EATEN;
                 GameManager.Instance.AddScore(ENEMY_EAT_POINT);
+
+                await DisplayGetScoreText(ENEMY_EAT_POINT);                
             }
             else if(pGhost.State != GhostStates.FRIGHTEND && pGhost.State != GhostStates.GOT_EATEN)
             {
@@ -164,6 +192,29 @@ public class PackManController : MonoBehaviour
                 IsEnemyHit = false;
             }
         }
+
+        else if(other.tag == "Item")
+        {
+            DisplayGetScoreText(other.GetComponent<PickupItem>().ItemData.Score).Forget();
+            Destroy(other.gameObject);
+        }
+    }
+
+    /// <summary>
+    /// アイテムや怯え状態の敵に触れた時にテキストを表示する
+    /// </summary>
+    private async UniTask DisplayGetScoreText(int getScore)
+    {
+        _getScoreText.gameObject.SetActive(true);
+        _getScoreText.text = getScore.ToString();
+
+        Vector3 textPosition = transform.position + new Vector3(0, 2, 0);
+        Vector3 screenPos = _mainCamera.WorldToScreenPoint(textPosition);
+        _getScoreText.transform.position = screenPos;
+
+        await UniTask.WaitForSeconds(0.5f);
+
+        _getScoreText.gameObject.SetActive(false);
     }
 
     /// <summary>

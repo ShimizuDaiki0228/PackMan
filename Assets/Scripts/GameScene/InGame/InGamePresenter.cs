@@ -51,7 +51,7 @@ public class InGamePresenter : MonoBehaviour
     {
         float deltaTime = Time.deltaTime;
 
-        if (!_isStart || _packMan.IsEnemyHit)
+        if (!_isStart || _packMan.IsEnemyHit || _packMan.IsEnemyEat)
             return;
 
         foreach(var enemy in _enemy)

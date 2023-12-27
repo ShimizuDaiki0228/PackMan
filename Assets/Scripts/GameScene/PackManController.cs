@@ -45,6 +45,11 @@ public class PackManController : MonoBehaviour
     public bool IsEnemyHit;
 
     /// <summary>
+    /// 敵を食べたかどうか
+    /// </summary>
+    public bool IsEnemyEat;
+
+    /// <summary>
     /// アイテムや怯え状態の敵に触れた時に取得する点数を表示するテキスト
     /// </summary>
     [SerializeField]
@@ -171,10 +176,14 @@ public class PackManController : MonoBehaviour
             PathFindings pGhost = other.GetComponent<PathFindings>();
             if(pGhost.State == GhostStates.FRIGHTEND)
             {
-                pGhost.State = GhostStates.GOT_EATEN;
+                pGhost.StateProp.Value = GhostStates.GOT_EATEN;
                 GameManager.Instance.AddScore(ENEMY_EAT_POINT);
 
-                await DisplayGetScoreText(ENEMY_EAT_POINT);                
+                IsEnemyEat = true;
+
+                await DisplayGetScoreText(ENEMY_EAT_POINT);
+                
+                IsEnemyEat = false;
             }
             else if(pGhost.State != GhostStates.FRIGHTEND && pGhost.State != GhostStates.GOT_EATEN)
             {

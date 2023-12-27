@@ -13767,6 +13767,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2000872343}
     - target: {fileID: 7899968401227564341, guid: 97b59b98449559e418bd1d03127bf64f, type: 3}
+      propertyPath: StateProp.value
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7899968401227564341, guid: 97b59b98449559e418bd1d03127bf64f, type: 3}
       propertyPath: _homeTarget.Array.data[0]
       value: 
       objectReference: {fileID: 1281707974}

@@ -129,19 +129,19 @@ public class GhostManager : MonoBehaviour
             PathFindings pGhost = ghost.GetComponent<PathFindings>();
             if (pGhost.State == GhostStates.CHASE && _scatter)
             {
-                pGhost.State = GhostStates.SCATTER;
+                pGhost.StateProp.Value = GhostStates.SCATTER;
             }
             else if (pGhost.State == GhostStates.SCATTER && _chase)
             {
-                pGhost.State = GhostStates.CHASE;
+                pGhost.StateProp.Value = GhostStates.CHASE;
             }
             else if (pGhost.State != GhostStates.HOME && pGhost.State != GhostStates.GOT_EATEN && _frighten)
             {
-                pGhost.State = GhostStates.FRIGHTEND;
+                pGhost.StateProp.Value = GhostStates.FRIGHTEND;
             }
             else if (pGhost.State == GhostStates.FRIGHTEND)
             {
-                pGhost.State = GhostStates.CHASE;
+                pGhost.StateProp.Value = GhostStates.CHASE;
             }
         }
     }
@@ -156,7 +156,7 @@ public class GhostManager : MonoBehaviour
             PathFindings pGhost = ghost.GetComponent<PathFindings>();
             if (score >= pGhost.PointsToCollect && !pGhost.Released)
             {
-                pGhost.State = GhostStates.CHASE;
+                pGhost.StateProp.Value = GhostStates.CHASE;
                 pGhost.Released = true;
             }
         }

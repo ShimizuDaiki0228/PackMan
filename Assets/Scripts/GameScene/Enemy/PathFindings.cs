@@ -73,12 +73,12 @@ public class PathFindings : MonoBehaviour
         FRIGHTEND,
         EYESONLY
     }
-    private int _activeAppearanceNumber;
+
     [SerializeField]
     private GameObject[] _appearance;
 
-
-    public GhostStates State;
+    public ReactiveProperty<GhostStates> StateProp;
+    public GhostStates State => StateProp.Value;
 
     private const float HOME_TIMER = 3f;
     private float _currentTimer = 0f;
@@ -91,8 +91,6 @@ public class PathFindings : MonoBehaviour
 
     protected virtual void Start()
     {
-        
-
         _initPosition = transform.position;
         _initState = State;
         _destination = transform.position;
@@ -106,6 +104,10 @@ public class PathFindings : MonoBehaviour
         {
             target.GetComponent<MeshRenderer>().enabled = false;
         }
+
+        StateProp.Subscribe(state =>
+                SetAppearance(state)
+            ).AddTo(this);
     }
 
     /// <summary>
@@ -249,7 +251,6 @@ public class PathFindings : MonoBehaviour
         switch(State)
         {
             case GhostStates.HOME:
-                SetAppearance((int)Appearance.NORMAL);
                 _speed = 1.5f;
 
                 TargetContainsCheck(_homeTarget);
@@ -261,7 +262,7 @@ public class PathFindings : MonoBehaviour
                     if( _currentTimer >= HOME_TIMER)
                     {
                         _currentTimer = 0;
-                        State = GhostStates.CHASE;
+                        StateProp.Value = GhostStates.CHASE;
                     }
                 }
 
@@ -269,11 +270,9 @@ public class PathFindings : MonoBehaviour
                 break;
 
             case GhostStates.LEAVING_HOME:
-                SetAppearance((int)Appearance.NORMAL);
                 break;
 
             case GhostStates.CHASE:
-                SetAppearance((int)Appearance.NORMAL);
                 _currentTarget = _packManTarget;
                 _speed = 3f;
 
@@ -281,7 +280,6 @@ public class PathFindings : MonoBehaviour
                 break;
 
             case GhostStates.SCATTER:
-                SetAppearance((int)Appearance.NORMAL);
                 _speed = 3f;
 
                 TargetContainsCheck(_scatterTarget);
@@ -292,7 +290,6 @@ public class PathFindings : MonoBehaviour
                 break;
 
             case GhostStates.FRIGHTEND:
-                SetAppearance((int)Appearance.FRIGHTEND);
                 _speed = 1.5f;
 
                 TargetContainsCheck(_homeTarget);
@@ -302,13 +299,12 @@ public class PathFindings : MonoBehaviour
                 break;
 
             case GhostStates.GOT_EATEN:
-                SetAppearance((int)Appearance.EYESONLY);
                 _speed = 7f;
                 _currentTarget = _homeTarget[0];
 
                 if (Vector3.Distance(transform.position, _homeTarget[0].position) < 0.0001f)
                 {
-                    State = GhostStates.HOME;
+                    StateProp.Value = GhostStates.HOME;
                 }
                 Move();
 
@@ -343,17 +339,22 @@ public class PathFindings : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// å©ÇΩñ⁄ÇïœçXÇ∑ÇÈ
-    /// </summary>
-    /// <param name="appearanceNumber">å©ÇΩñ⁄ÇÃî‘çÜ</param>
-    private void SetAppearance(int appearanceNumber)
+    private void SetAppearance(GhostStates state)
     {
-        _activeAppearanceNumber = appearanceNumber;
+        int activeAppearanceNumber;
 
-        for(int i = 0; i < _appearance.Length; i++)
+        if(state == GhostStates.HOME || state == GhostStates.LEAVING_HOME || state == GhostStates.CHASE || state == GhostStates.SCATTER)
+            activeAppearanceNumber = 0;
+
+        else if(state == GhostStates.FRIGHTEND)
+            activeAppearanceNumber = 1;
+
+        else
+            activeAppearanceNumber = 2;
+
+        for (int i = 0; i < _appearance.Length; i++)
         {
-            _appearance[i].SetActive(i == _activeAppearanceNumber);
+            _appearance[i].SetActive(i == activeAppearanceNumber);
         }
     }
 
@@ -363,7 +364,7 @@ public class PathFindings : MonoBehaviour
     public virtual void Reset()
     {
         transform.position = _initPosition;
-        State = _initState;
+        StateProp.Value = _initState;
 
         //Ç±ÇÃÇÊÇ§Ç…ÇµÇ»Ç¢Ç∆ç≈èâÇÃãììÆÇ™ÉoÉOÇÈ
         if(State != GhostStates.HOME)

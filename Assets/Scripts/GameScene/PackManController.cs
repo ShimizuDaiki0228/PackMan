@@ -27,6 +27,12 @@ public class PackManController : MonoBehaviour
     private Subject<Unit> _onResetSubject = new Subject<Unit>();
     public IObservable<Unit> OnResetAsObservable => _onResetSubject.AsObservable();
 
+    /// <summary>
+    /// 消えるときのエフェクト
+    /// </summary>
+    [SerializeField]
+    private GameObject _vanishingEffectPrefab;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -123,6 +129,12 @@ public class PackManController : MonoBehaviour
             }
             else if(pGhost.State != GhostStates.FRIGHTEND && pGhost.State != GhostStates.GOT_EATEN)
             {
+                var vanishingEffect = Instantiate(_vanishingEffectPrefab, transform.position, Quaternion.identity);
+                var mainModule = _vanishingEffectPrefab.GetComponent<ParticleSystem>().main;
+                float lifeTime = mainModule.startLifetime.constant;
+
+                Destroy(vanishingEffect, lifeTime);
+
                 GameManager.Instance.LoseLife();
                 Reset();
 

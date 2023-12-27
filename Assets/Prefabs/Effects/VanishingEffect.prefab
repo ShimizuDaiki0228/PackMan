@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1386037070481897023}
   - component: {fileID: 4920917607271652575}
   m_Layer: 0
-  m_Name: LoseLifeEffect
+  m_Name: VanishingEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

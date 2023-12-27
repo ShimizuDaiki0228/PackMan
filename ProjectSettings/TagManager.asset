@@ -9,6 +9,7 @@ TagManager:
   - NoPellet
   - Ghost
   - Item
+  - PowerPellet
   layers:
   - Default
   - TransparentFX

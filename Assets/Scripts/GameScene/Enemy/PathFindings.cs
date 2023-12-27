@@ -366,9 +366,7 @@ public class PathFindings : MonoBehaviour
         transform.position = _initPosition;
         StateProp.Value = _initState;
 
-        //‚±‚Ì‚æ‚¤‚É‚µ‚È‚¢‚ÆÅ‰‚Ì‹““®‚ªƒoƒO‚é
-        if(State != GhostStates.HOME)
-            _destination = transform.position;
+        _destination = transform.position;
 
         _currentDirection = InGameConst.Up;
 

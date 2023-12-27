@@ -1,8 +1,10 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using DG.Tweening;
 
 public class PackManController : MonoBehaviour
 {
@@ -32,6 +34,26 @@ public class PackManController : MonoBehaviour
     /// </summary>
     [SerializeField]
     private GameObject _vanishingEffectPrefab;
+
+    /// <summary>
+    /// 敵に当たったかどうか
+    /// </summary>
+    public bool IsEnemyHit;
+
+    /// <summary>
+    /// 敵に当たって何秒後に消えるようにするか
+    /// </summary>
+    private const float DELAY_VANISH_TIME = 0.5f;
+
+    /// <summary>
+    /// 敵に当たって消滅してから再開するまでにかかる時間
+    /// </summary>
+    private const float DELEY_RESTART_TIME = 2f;
+
+    /// <summary>
+    /// 敵を食べた時にゲットする得点
+    /// </summary>
+    private const int ENEMY_EAT_POINT = 400;
 
     // Start is called before the first frame update
     void Start()
@@ -86,7 +108,6 @@ public class PackManController : MonoBehaviour
         if(Vector3.Distance(transform.position, _destination) < 0.0001f)
         {
             transform.localEulerAngles = _currentDirection;
-            //if(_canMove)
             {
                 if(MoveValid())
                 {
@@ -117,7 +138,7 @@ public class PackManController : MonoBehaviour
         return true;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private async void OnTriggerEnter(Collider other)
     {
         if(other.tag == "Ghost")
         {
@@ -125,15 +146,13 @@ public class PackManController : MonoBehaviour
             if(pGhost.State == GhostStates.FRIGHTEND)
             {
                 pGhost.State = GhostStates.GOT_EATEN;
-                GameManager.Instance.AddScore(400);
+                GameManager.Instance.AddScore(ENEMY_EAT_POINT);
             }
             else if(pGhost.State != GhostStates.FRIGHTEND && pGhost.State != GhostStates.GOT_EATEN)
             {
-                var vanishingEffect = Instantiate(_vanishingEffectPrefab, transform.position, Quaternion.identity);
-                var mainModule = _vanishingEffectPrefab.GetComponent<ParticleSystem>().main;
-                float lifeTime = mainModule.startLifetime.constant;
+                IsEnemyHit = true;
 
-                Destroy(vanishingEffect, lifeTime);
+                await HitEnemy(); 
 
                 GameManager.Instance.LoseLife();
                 Reset();
@@ -141,7 +160,39 @@ public class PackManController : MonoBehaviour
                 //ライフが0でない場合は再度リスタートする際のテキストを表示する
                 if (GameManager.Instance.Life != 0)
                     _onResetSubject.OnNext(Unit.Default);
+
+                IsEnemyHit = false;
             }
         }
+    }
+
+    /// <summary>
+    /// 敵と衝突したときに呼ばれる
+    /// </summary>
+    private async UniTask HitEnemy()
+    {
+        await UniTask.WaitForSeconds(DELAY_VANISH_TIME);
+
+        await gameObject.transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InBack);
+
+        //消滅するエフェクトを生成
+        EffectCreate(_vanishingEffectPrefab);
+
+        await UniTask.WaitForSeconds(DELEY_RESTART_TIME);
+
+        gameObject.transform.localScale = Vector3.one;
+    }
+
+    /// <summary>
+    /// エフェクトを生成する
+    /// エフェクトのStart Life Timeを過ぎると破棄する
+    /// </summary>
+    private void EffectCreate(GameObject effectPrefab)
+    {
+        var effect = Instantiate(effectPrefab, transform.position, Quaternion.identity);
+        var mainModule = effectPrefab.GetComponent<ParticleSystem>().main;
+        float lifeTime = mainModule.startLifetime.constant;
+
+        Destroy(effect, lifeTime);
     }
 }

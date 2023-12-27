@@ -14102,6 +14102,14 @@ PrefabInstance:
       propertyPath: _gameManager
       value: 
       objectReference: {fileID: 2123315887}
+    - target: {fileID: 3670118521374634393, guid: 92ac3c60a23dcbb44935df53d7b879fc, type: 3}
+      propertyPath: _vanishingEffect
+      value: 
+      objectReference: {fileID: 1021091117896398792, guid: 47a882d53517da44a97f615a718be3a6, type: 3}
+    - target: {fileID: 3670118521374634393, guid: 92ac3c60a23dcbb44935df53d7b879fc, type: 3}
+      propertyPath: _vanishingEffectPrefab
+      value: 
+      objectReference: {fileID: 1021091117896398792, guid: 47a882d53517da44a97f615a718be3a6, type: 3}
     - target: {fileID: 5336449290957023680, guid: 92ac3c60a23dcbb44935df53d7b879fc, type: 3}
       propertyPath: m_RootOrder
       value: 5

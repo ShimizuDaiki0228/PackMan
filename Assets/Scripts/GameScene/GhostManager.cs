@@ -42,7 +42,7 @@ public class GhostManager : MonoBehaviour
 
     private void Start()
     {
-        _scatter = true;
+        Reset();
 
         SetEvent(); 
     }
@@ -161,13 +161,29 @@ public class GhostManager : MonoBehaviour
     }
 
     /// <summary>
+    /// リセット
+    /// </summary>
+    private void Reset()
+    {
+        _currentChaseTimer = 0;
+        _currentFrightendTimer = 0;
+        _currentScatterTimer = 0;
+
+        _scatter = true;
+        _chase = false;
+        _frighten = false;
+    }
+
+    /// <summary>
     /// 敵の状態をリセットする
     /// </summary>
-    public void GhostReset()
+    private void GhostReset()
     {
         foreach (GameObject ghost in _ghostList)
         {
             ghost.GetComponent<PathFindings>().Reset();
         }
+
+        Reset();
     }
 }

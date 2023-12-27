@@ -55,9 +55,4 @@ public class InkyController : PathFindings
 
         _grid.InkyPath = _path;
     }
-
-    public override void Reset()
-    {
-        base.Reset();
-    }
 }

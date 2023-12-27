@@ -21,5 +21,7 @@ public class BlinkyController : PathFindings
     public override void Reset()
     {
         base.Reset();
+
+        State = GhostStates.SCATTER;
     }
 }

@@ -1,6 +1,9 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal;
 using UnityEngine;
+using UniRx;
 
 public class CameraFollow : MonoBehaviour
 {
@@ -15,11 +18,26 @@ public class CameraFollow : MonoBehaviour
 
     private const float SPEED = 1;
 
+    private Vector3 _initPosition;
+
     // Start is called before the first frame update
     void Start()
     {
+        _initPosition = transform.position;
+
         _distX = transform.position.x - _target.position.x;
         _distZ = transform.position.z - _target.position.z;
+
+        SetEvent();
+    }
+
+    /// <summary>
+    /// ÉCÉxÉìÉgê›íË
+    /// </summary>
+    private void SetEvent()
+    {
+        GameManager.Instance.LifeProp
+            .Subscribe(_ => Reset()).AddTo(this);
     }
 
     // Update is called once per frame
@@ -30,5 +48,10 @@ public class CameraFollow : MonoBehaviour
         _pos.z = _target.position.z + _distZ;
 
         transform.position = Vector3.Lerp(transform.position, _pos, SPEED * Time.deltaTime);
+    }
+
+    private void Reset()
+    {
+        transform.position = _initPosition;
     }
 }

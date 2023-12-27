@@ -50,9 +50,4 @@ public class PinkyController : PathFindings
 
         _grid.PinkyPath = _path;
     }
-
-    public override void Reset()
-    {
-        base.Reset();
-    }
 }

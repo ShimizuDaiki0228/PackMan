@@ -50,9 +50,4 @@ public class ClydeController : PathFindings
 
         _grid.ClydePath = _path;
     }
-
-    public override void Reset()
-    {
-        base.Reset();
-    }
 }

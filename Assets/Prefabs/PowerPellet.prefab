@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 518102195354045412}
   - component: {fileID: 871253278320288754}
   - component: {fileID: 3043902188593928213}
-  - component: {fileID: 1081408765578570733}
+  - component: {fileID: 1888538585930054886}
   m_Layer: 0
   m_Name: PowerPellet
-  m_TagString: Untagged
+  m_TagString: PowerPellet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -106,7 +106,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1081408765578570733
+--- !u!114 &1888538585930054886
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,6 +115,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7904142135790462353}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f69c8d4eec959a44949313257e626e4, type: 3}
+  m_Script: {fileID: 11500000, guid: b51c702b5850e4a44be573d2fcc05ce6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

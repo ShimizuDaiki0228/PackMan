@@ -7,6 +7,8 @@ public class PinkyController : PathFindings
     protected override void Start()
     {
         base.Start();
+
+        PointsToCollect = 90;
     }
 
     protected override void CheckState()

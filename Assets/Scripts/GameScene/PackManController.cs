@@ -61,6 +61,11 @@ public class PackManController : MonoBehaviour
     private readonly Vector3 _getScoreTextPositionOffset = new Vector3(0, 2, 0);
 
     /// <summary>
+    /// 敵を食べた回数
+    /// </summary>
+    private int _eatEnemyAmount = 0;
+
+    /// <summary>
     /// 敵に当たって何秒後に消えるようにするか
     /// </summary>
     private const float DELAY_VANISH_TIME = 0.5f;
@@ -73,7 +78,23 @@ public class PackManController : MonoBehaviour
     /// <summary>
     /// 敵を食べた時にゲットする得点
     /// </summary>
-    private const int ENEMY_EAT_POINT = 400;
+    private const int ENEMY_EAT_POINT = 200;
+
+    /// <summary>
+    /// 餌を取得時に手に入るスコア
+    /// </summary>
+    private const int PELLET_SCORE = 3;
+
+    /// <summary>
+    /// パワー餌を取得時に手に入るスコア
+    /// </summary>
+    private const int POWERPELLET_SCORE = 10;
+
+    /// <summary>
+    /// 餌を食べたことを知らせるオブザーバー
+    /// </summary>
+    private Subject<int> _onEatPelletSubject = new Subject<int>();
+    public IObservable<int> OnEatPelletAsObservable => _onEatPelletSubject.AsObservable();
 
     // Start is called before the first frame update
     void Start()
@@ -176,14 +197,18 @@ public class PackManController : MonoBehaviour
             PathFindings pGhost = other.GetComponent<PathFindings>();
             if(pGhost.State == GhostStates.FRIGHTEND)
             {
+                int getScore = (int)Mathf.Pow(2, _eatEnemyAmount) * ENEMY_EAT_POINT;
+
                 pGhost.StateProp.Value = GhostStates.GOT_EATEN;
-                GameManager.Instance.AddScore(ENEMY_EAT_POINT);
+                GameManager.Instance.AddScore(getScore);
 
                 IsEnemyEat = true;
 
-                await DisplayGetScoreText(ENEMY_EAT_POINT);
+                await DisplayGetScoreText(getScore);
                 
                 IsEnemyEat = false;
+
+                _eatEnemyAmount++;
             }
             else if(pGhost.State != GhostStates.FRIGHTEND && pGhost.State != GhostStates.GOT_EATEN)
             {
@@ -204,7 +229,24 @@ public class PackManController : MonoBehaviour
 
         else if(other.tag == "Item")
         {
-            DisplayGetScoreText(other.GetComponent<PickupItem>().ItemData.Score).Forget();
+            int score = other.GetComponent<PickupItem>().ItemData.Score;
+            GameManager.Instance.ScoreProp.Value += score;
+            DisplayGetScoreText(score).Forget();
+            Destroy(other.gameObject);
+        }
+
+        else if(other.tag == "Pellet")
+        {
+            _onEatPelletSubject.OnNext(PELLET_SCORE);
+            GameManager.Instance.ReducePellet(PELLET_SCORE);
+            Destroy(other.gameObject);
+        }
+
+        else if(other.tag == "PowerPellet")
+        {
+            _onEatPelletSubject.OnNext(POWERPELLET_SCORE);
+            GameManager.Instance.ReducePellet(POWERPELLET_SCORE);
+            GameManager.Instance.OnFrightenSubject.OnNext(Unit.Default);
             Destroy(other.gameObject);
         }
     }
@@ -254,5 +296,13 @@ public class PackManController : MonoBehaviour
         float lifeTime = mainModule.startLifetime.constant;
 
         Destroy(effect, lifeTime);
+    }
+
+    /// <summary>
+    /// パックマンが敵を食べた回数をリセットする
+    /// </summary>
+    public void ResetEatEnemyAmount()
+    {
+        _eatEnemyAmount = 0;
     }
 }

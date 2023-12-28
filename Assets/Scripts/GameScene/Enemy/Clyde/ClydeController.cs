@@ -7,6 +7,8 @@ public class ClydeController : PathFindings
     protected override void Start()
     {
         base.Start();
+
+        PointsToCollect = 20;
     }
 
     protected override void CheckState()

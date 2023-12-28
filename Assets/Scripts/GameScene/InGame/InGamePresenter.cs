@@ -7,6 +7,12 @@ using UniRx;
 public class InGamePresenter : MonoBehaviour
 {
     /// <summary>
+    /// View
+    /// </summary>
+    [SerializeField]
+    private InGameView _view;
+
+    /// <summary>
     /// パックマン
     /// </summary>
     [SerializeField]
@@ -19,10 +25,11 @@ public class InGamePresenter : MonoBehaviour
     private List<PathFindings> _enemy;
 
     /// <summary>
-    /// View
+    /// ゴーストマネージャー
+    /// ゴースト全体を管理する
     /// </summary>
     [SerializeField]
-    private InGameView _view;
+    private GhostManager _ghostManager;
 
     /// <summary>
     /// ゲームが開始されているかどうか
@@ -34,9 +41,27 @@ public class InGamePresenter : MonoBehaviour
         _view.Initialize();
 
         Bind();
+        SetEvent();
     }
 
+    /// <summary>
+    /// バインド
+    /// </summary>
     private void Bind()
+    {
+        _ghostManager.FrightenProp
+            .Subscribe(_ =>
+                _packMan.ResetEatEnemyAmount()
+            ).AddTo(this);
+
+        _packMan.OnEatPelletAsObservable
+            .Subscribe(_ghostManager.AddNowGetScore).AddTo(this);
+    }
+
+    /// <summary>
+    /// イベント設定
+    /// </summary>
+    private void SetEvent()
     {
         _view.CanStartProp
             .Subscribe(canStart =>
@@ -44,7 +69,7 @@ public class InGamePresenter : MonoBehaviour
             ).AddTo(this);
 
         _packMan.OnResetAsObservable
-            .Subscribe(_ => Reset() ).AddTo(this);
+            .Subscribe(_ => Reset()).AddTo(this);
     }
 
     private void Update()

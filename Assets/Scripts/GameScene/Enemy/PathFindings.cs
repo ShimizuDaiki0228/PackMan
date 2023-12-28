@@ -65,16 +65,21 @@ public class PathFindings : MonoBehaviour
     private const float HOME_TIMER = 3f;
     private float _currentTimer = 0f;
 
+    /// <summary>
+    /// HOME状態のゴーストが開放されるまでに必要な得点
+    /// </summary>
     public int PointsToCollect;
-    public bool Released = false;
+    public bool Released;
 
     private Vector3 _initPosition;
     private GhostStates _initState;
+    private bool _initReleased;
 
     protected virtual void Start()
     {
         _initPosition = transform.position;
         _initState = State;
+        _initReleased = Released;
         _destination = transform.position;
         _currentDirection = InGameConst.Up;
 
@@ -286,7 +291,7 @@ public class PathFindings : MonoBehaviour
 
                 if (Vector3.Distance(transform.position, _homeTarget[0].position) < 0.0001f)
                 {
-                    StateProp.Value = GhostStates.HOME;
+                    StateProp.Value = GhostStates.CHASE;
                 }
                 Move();
 
@@ -351,6 +356,7 @@ public class PathFindings : MonoBehaviour
     {
         transform.position = _initPosition;
         StateProp.Value = _initState;
+        Released = _initReleased;
 
         _destination = transform.position;
 

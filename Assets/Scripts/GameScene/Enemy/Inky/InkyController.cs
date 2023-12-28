@@ -11,6 +11,8 @@ public class InkyController : PathFindings
     protected override void Start()
     {
         base.Start();
+
+        PointsToCollect = 60;
     }
 
 

@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class BlinkyController : PathFindings
 {
+
+
     protected override void Start()
     {
         base.Start();
+
+        PointsToCollect = 0;
+        Released = true;
     }
 
     protected override void PathTracer(Node startNode, Node goalNode)

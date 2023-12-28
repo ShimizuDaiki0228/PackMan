@@ -20,7 +20,9 @@ public class GhostManager : MonoBehaviour
     /// </summary>
     private bool _scatter;
     private bool _chase;
-    private bool _frighten;
+    private readonly ReactiveProperty<bool> _frightenProp = new ReactiveProperty<bool>(false);
+    public IReadOnlyReactiveProperty<bool> FrightenProp => _frightenProp;
+    private bool _frighten => _frightenProp.Value;
 
     /// <summary>
     /// scatter状態である時間
@@ -37,8 +39,8 @@ public class GhostManager : MonoBehaviour
     /// <summary>
     /// frighten状態である時間
     /// </summary>
-    private const float FRIGHTEND_ALERT_TIMER = 3.5f;
-    private const float FRIGHTEND_TIMER = 5f;
+    private const float FRIGHTEND_ALERT_TIMER = 5f;
+    private const float FRIGHTEND_TIMER = 7f;
     private float _currentFrightendTimer = 0f;
 
     /// <summary>
@@ -49,6 +51,13 @@ public class GhostManager : MonoBehaviour
     private GameObject[] _ghostFrightenCancelBody;
 
     private bool _isAlert;
+
+    /// <summary>
+    /// 現在取得しているスコア
+    /// ゲームオーバーや次のレベルに移動すると0になる
+    /// また餌を食べた時のみのスコアの合計
+    /// </summary>
+    private int _nowGetScore = 0;
 
     private void Start()
     {
@@ -62,13 +71,10 @@ public class GhostManager : MonoBehaviour
     /// </summary>
     private void SetEvent()
     {
-        GameManager.Instance.ScoreProp
-            .Subscribe(GhostRelease).AddTo(this);
-
         GameManager.Instance.OnFrightenAsObservable
             .Subscribe(_ =>
             {
-                _frighten = true;
+                _frightenProp.Value = true;
             }
             ).AddTo(this);
 
@@ -134,7 +140,7 @@ public class GhostManager : MonoBehaviour
                     _currentFrightendTimer = 0f;
                     _chase = true;
                     _scatter = false;
-                    _frighten = false;
+                    _frightenProp.Value = false;
                     _isAlert = false;
 
                     foreach(var body in _ghostFrightenCancelBody)
@@ -187,12 +193,12 @@ public class GhostManager : MonoBehaviour
     /// <summary>
     /// 敵を動ける状態にするかどうかを確認する
     /// </summary>
-    private void GhostRelease(int score)
+    private void GhostRelease()
     {
         foreach (var ghost in _ghostList)
         {
             PathFindings pGhost = ghost.GetComponent<PathFindings>();
-            if (score >= pGhost.PointsToCollect && !pGhost.Released)
+            if (_nowGetScore >= pGhost.PointsToCollect && !pGhost.Released)
             {
                 pGhost.StateProp.Value = GhostStates.CHASE;
                 pGhost.Released = true;
@@ -211,8 +217,9 @@ public class GhostManager : MonoBehaviour
 
         _scatter = true;
         _chase = false;
-        _frighten = false;
+        _frightenProp.Value = false;
         _isAlert = false;
+        _nowGetScore = 0;
 
         foreach(var body in _ghostFrightenCancelBody)
             body.SetActive(false);
@@ -229,5 +236,15 @@ public class GhostManager : MonoBehaviour
         }
 
         Reset();
+    }
+
+    /// <summary>
+    /// 現在のゲームで取得している点数を加算する
+    /// </summary>
+    public void AddNowGetScore(int score)
+    {
+        _nowGetScore += score;
+
+        GhostRelease();
     }
 }

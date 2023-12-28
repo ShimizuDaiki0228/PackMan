@@ -11,8 +11,6 @@ public class InkyController : PathFindings
     protected override void Start()
     {
         base.Start();
-
-        _ghost = Ghosts.INKY;
     }
 
 

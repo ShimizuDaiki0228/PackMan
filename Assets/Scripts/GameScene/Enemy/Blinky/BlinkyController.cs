@@ -7,8 +7,6 @@ public class BlinkyController : PathFindings
     protected override void Start()
     {
         base.Start();
-
-        _ghost = Ghosts.BLINKY;
     }
 
     protected override void PathTracer(Node startNode, Node goalNode)

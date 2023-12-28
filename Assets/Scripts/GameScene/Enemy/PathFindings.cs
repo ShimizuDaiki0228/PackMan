@@ -29,11 +29,6 @@ public enum Ghosts
 
 public class PathFindings : MonoBehaviour
 {
-    /// <summary>
-    /// ゴーストのタイプ
-    /// </summary>
-    protected Ghosts _ghost;
-
     protected List<Node> _path = new List<Node>();
 
     private int _distance = 10;
@@ -60,19 +55,6 @@ public class PathFindings : MonoBehaviour
     private float _speed = 3f;
 
     private Node _lastVisitedNode;
-
-    
-
-    /// <summary>
-    /// 見た目
-    /// _activeAppearanceNumber = 0 : Normal, 1 : Frightend, 2 : Eyes Only 
-    /// </summary>
-    private enum Appearance
-    {
-        NORMAL,
-        FRIGHTEND,
-        EYESONLY
-    }
 
     [SerializeField]
     private GameObject[] _appearance;
@@ -339,6 +321,10 @@ public class PathFindings : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// GhostStatesによって見た目を変更する
+    /// </summary>
+    /// <param name="state"></param>
     private void SetAppearance(GhostStates state)
     {
         int activeAppearanceNumber;

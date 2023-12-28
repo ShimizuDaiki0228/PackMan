@@ -7,8 +7,6 @@ public class PinkyController : PathFindings
     protected override void Start()
     {
         base.Start();
-
-        _ghost = Ghosts.PINKY;
     }
 
     protected override void CheckState()

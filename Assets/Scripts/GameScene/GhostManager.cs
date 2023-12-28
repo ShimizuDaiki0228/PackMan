@@ -37,8 +37,18 @@ public class GhostManager : MonoBehaviour
     /// <summary>
     /// frighten状態である時間
     /// </summary>
+    private const float FRIGHTEND_ALERT_TIMER = 3.5f;
     private const float FRIGHTEND_TIMER = 5f;
     private float _currentFrightendTimer = 0f;
+
+    /// <summary>
+    /// 怯え状態がそろそろ解除するのを知らせる白いゴースト
+    /// 全ゴースト分
+    /// </summary>
+    [SerializeField]
+    private GameObject[] _ghostFrightenCancelBody;
+
+    private bool _isAlert;
 
     private void Start()
     {
@@ -111,15 +121,43 @@ public class GhostManager : MonoBehaviour
 
 
             _currentFrightendTimer += Time.deltaTime;
-            if (_currentFrightendTimer >= FRIGHTEND_TIMER)
+            if(_currentFrightendTimer >= FRIGHTEND_ALERT_TIMER)
             {
-                _currentFrightendTimer = 0f;
-                _chase = true;
-                _scatter = false;
-                _frighten = false;
+                if(!_isAlert)
+                {
+                    _isAlert = true;
+                    FrightenAlertMode().Forget();
+                }
+
+                if (_currentFrightendTimer >= FRIGHTEND_TIMER)
+                {
+                    _currentFrightendTimer = 0f;
+                    _chase = true;
+                    _scatter = false;
+                    _frighten = false;
+                    _isAlert = false;
+
+                    foreach(var body in _ghostFrightenCancelBody)
+                        body.SetActive(false);
+                }
             }
         }
 
+    }
+
+    /// <summary>
+    /// 怯え状態から通常の状態に戻りそうになる時にユーザーに警告するためにゴーストの見た目を変更する
+    /// </summary>
+    /// <returns></returns>
+    private async UniTask FrightenAlertMode()
+    {
+        while(_frighten)
+        {
+            foreach(var body in _ghostFrightenCancelBody)
+                body.SetActive(!body.activeSelf);
+
+            await UniTask.WaitForSeconds(0.25f);
+        }
     }
 
     private void UpdateStates()
@@ -174,6 +212,10 @@ public class GhostManager : MonoBehaviour
         _scatter = true;
         _chase = false;
         _frighten = false;
+        _isAlert = false;
+
+        foreach(var body in _ghostFrightenCancelBody)
+            body.SetActive(false);
     }
 
     /// <summary>

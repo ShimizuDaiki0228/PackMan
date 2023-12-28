@@ -7,8 +7,6 @@ public class ClydeController : PathFindings
     protected override void Start()
     {
         base.Start();
-
-        _ghost = Ghosts.CLYDE;
     }
 
     protected override void CheckState()

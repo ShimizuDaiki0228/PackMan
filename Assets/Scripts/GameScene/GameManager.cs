@@ -45,10 +45,11 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 敵の情報をリセットする
     /// 敵と衝突した場合に発火される
+    /// InGameViewで表示しているパックマンのライフを減らす
     /// </summary>
-    private Subject<Unit> _onGhostResetSubject = new Subject<Unit>();
-    public IObservable<Unit> OnGhostResetAsObservable
-        => _onGhostResetSubject.AsObservable();
+    private Subject<Unit> _onLoseLifeSubject = new Subject<Unit>();
+    public IObservable<Unit> OnLoseLifeAsObservable
+        => _onLoseLifeSubject.AsObservable();
 
     private void Awake()
     {
@@ -63,8 +64,8 @@ public class GameManager : MonoBehaviour
         }
 
         _scoreProp = new ReactiveProperty<int>(0);
-        _levelProp = new ReactiveProperty<int>(0);
-        _lifesProp = new ReactiveProperty<int>(2);
+        _levelProp = new ReactiveProperty<int>(1);
+        _lifesProp = new ReactiveProperty<int>(3);
     }
 
     /// <summary>
@@ -99,7 +100,7 @@ public class GameManager : MonoBehaviour
 
         _levelProp.Value++;
 
-        if (Score >= (Level - 1) * 3000)
+        if (Score >= (Level - 1) * 3000 && Life < 4)
         {
             _lifesProp.Value++;
         }
@@ -113,7 +114,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void LoseLife()
     {
-        _onGhostResetSubject.OnNext(Unit.Default);
+        _onLoseLifeSubject.OnNext(Unit.Default);
 
         _lifesProp.Value--;
         if (Life <= 0)

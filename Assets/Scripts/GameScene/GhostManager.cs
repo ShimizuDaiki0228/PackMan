@@ -62,7 +62,7 @@ public class GhostManager : MonoBehaviour
             }
             ).AddTo(this);
 
-        GameManager.Instance.OnGhostResetAsObservable
+        GameManager.Instance.OnLoseLifeAsObservable
             .Subscribe(_ =>
                 GhostReset()
             ).AddTo(this);

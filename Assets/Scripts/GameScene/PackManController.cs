@@ -6,6 +6,7 @@ using UniRx;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PackManController : MonoBehaviour
 {
@@ -224,6 +225,11 @@ public class PackManController : MonoBehaviour
                 //ライフが0でない場合は再度リスタートする際のテキストを表示する
                 if (GameManager.Instance.Life != 0)
                     _onResetSubject.OnNext(Unit.Default);
+
+                else if(GameManager.Instance.Life == 0)
+                {
+                    SceneManager.LoadScene("GameOverScene");
+                }
 
                 IsEnemyHit = false;
             }

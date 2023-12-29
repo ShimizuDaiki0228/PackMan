@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
 
         _scoreProp = new ReactiveProperty<int>(0);
         _levelProp = new ReactiveProperty<int>(1);
-        _lifesProp = new ReactiveProperty<int>(3);
+        _lifesProp = new ReactiveProperty<int>(2);
     }
 
     /// <summary>
@@ -121,8 +121,6 @@ public class GameManager : MonoBehaviour
         {
             ScoreController.Level = Level;
             ScoreController.Score = Score;
-
-            SceneManager.LoadScene("GameOverScene");
 
             return;
         }

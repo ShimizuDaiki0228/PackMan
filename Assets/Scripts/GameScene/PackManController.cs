@@ -40,6 +40,18 @@ public class PackManController : MonoBehaviour
     private GameObject _vanishingEffectPrefab;
 
     /// <summary>
+    /// テレポートするボックスの右側
+    /// </summary>
+    [SerializeField]
+    private GameObject _rightTeleportBox;
+
+    /// <summary>
+    /// テレポートするボックスの左側
+    /// </summary>
+    [SerializeField]
+    private GameObject _leftTeleportBox;
+
+    /// <summary>
     /// 敵に当たったかどうか
     /// </summary>
     public bool IsEnemyHit;
@@ -120,16 +132,6 @@ public class PackManController : MonoBehaviour
     {
         Move(deltaTime);
 
-        if(Input.GetKeyDown(KeyCode.Space) )
-        {
-            Vector3 textPosition = transform.position + new Vector3(0, 2, 0);
-
-            // 3Dオブジェクトの位置をスクリーン座標に変換
-            Vector3 screenPos = _mainCamera.WorldToScreenPoint(textPosition);
-
-            // UIテキストの位置を更新
-            _getScoreText.transform.position = screenPos;
-        }
     }
 
     private void Move(float deltaTime)
@@ -192,10 +194,10 @@ public class PackManController : MonoBehaviour
 
     private async void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "Ghost")
+        if (other.tag == "Ghost")
         {
             PathFindings pGhost = other.GetComponent<PathFindings>();
-            if(pGhost.State == GhostStates.FRIGHTEND)
+            if (pGhost.State == GhostStates.FRIGHTEND)
             {
                 int getScore = (int)Mathf.Pow(2, _eatEnemyAmount) * ENEMY_EAT_POINT;
 
@@ -210,11 +212,11 @@ public class PackManController : MonoBehaviour
 
                 _eatEnemyAmount++;
             }
-            else if(pGhost.State != GhostStates.FRIGHTEND && pGhost.State != GhostStates.GOT_EATEN)
+            else if (pGhost.State != GhostStates.FRIGHTEND && pGhost.State != GhostStates.GOT_EATEN)
             {
                 IsEnemyHit = true;
 
-                await HitEnemy(); 
+                await HitEnemy();
 
                 GameManager.Instance.LoseLife();
                 Reset();
@@ -227,7 +229,7 @@ public class PackManController : MonoBehaviour
             }
         }
 
-        else if(other.tag == "Item")
+        else if (other.tag == "Item")
         {
             int score = other.GetComponent<PickupItem>().ItemData.Score;
             GameManager.Instance.ScoreProp.Value += score;
@@ -235,19 +237,31 @@ public class PackManController : MonoBehaviour
             Destroy(other.gameObject);
         }
 
-        else if(other.tag == "Pellet")
+        else if (other.tag == "Pellet")
         {
             _onEatPelletSubject.OnNext(PELLET_SCORE);
             GameManager.Instance.ReducePellet(PELLET_SCORE);
             Destroy(other.gameObject);
         }
 
-        else if(other.tag == "PowerPellet")
+        else if (other.tag == "PowerPellet")
         {
             _onEatPelletSubject.OnNext(POWERPELLET_SCORE);
             GameManager.Instance.ReducePellet(POWERPELLET_SCORE);
             GameManager.Instance.OnFrightenSubject.OnNext(Unit.Default);
             Destroy(other.gameObject);
+        }
+
+        else if (other.gameObject == _rightTeleportBox)
+        {
+            transform.position = _leftTeleportBox.transform.position + new Vector3(2f, 0, 0);
+            _destination = transform.position;
+        }
+
+        else if(other.gameObject == _leftTeleportBox)
+        {
+            transform.position = _rightTeleportBox.transform.position + new Vector3(-2f, 0, 0);
+            _destination = transform.position;
         }
     }
 

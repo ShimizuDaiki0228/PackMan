@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private ReactiveProperty<int> _levelProp;
     public ReactiveProperty<int> LevelProp => _levelProp;
-    private int Level => _levelProp.Value;
+    public int Level => _levelProp.Value;
 
     /// <summary>
     /// ‰a‚Ì‡Œv”

@@ -12,7 +12,7 @@ public class PackManController : MonoBehaviour
     [SerializeField]
     private Camera _mainCamera;
 
-    private const float SPEED = 5f;
+    private const float SPEED = 3f;
     
     private Vector3 _currentDirection = Vector3.zero;
 
@@ -134,7 +134,7 @@ public class PackManController : MonoBehaviour
 
     private void Move(float deltaTime)
     {
-        transform.position = Vector3.MoveTowards(transform.position, _destination, SPEED * deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, _destination, (SPEED + 0.3f * GameManager.Instance.Level) * deltaTime);
 
         if(Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {

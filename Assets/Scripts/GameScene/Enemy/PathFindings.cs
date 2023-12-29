@@ -185,7 +185,7 @@ public class PathFindings : MonoBehaviour
 
     private void Move()
     {
-        transform.position = Vector3.MoveTowards(transform.position, _destination, _speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, _destination, (_speed + 0.3f * GameManager.Instance.Level)  * Time.deltaTime);
         if(Vector3.Distance(transform.position, _destination) < 0.0001f)
         {
             FindThePath();

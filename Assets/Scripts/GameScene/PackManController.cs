@@ -74,6 +74,28 @@ public class PackManController : MonoBehaviour
     private readonly Vector3 _getScoreTextPositionOffset = new Vector3(0, 2, 0);
 
     /// <summary>
+    /// オーディオソース
+    /// </summary>
+    [SerializeField]
+    private AudioSource _audioSource;
+
+    /// <summary>
+    /// 歩いている時の音
+    /// </summary>
+    [SerializeField]
+    private AudioClip _walkSFX;
+
+    /// <summary>
+    /// 歩いている時の音の長さ
+    /// </summary>
+    private float _walkSFXLength;
+
+    /// <summary>
+    /// 最後に歩いた時の時間
+    /// </summary>
+    private float _lastWalkTime;
+
+    /// <summary>
     /// 敵を食べた回数
     /// </summary>
     private int _eatEnemyAmount = 0;
@@ -113,6 +135,7 @@ public class PackManController : MonoBehaviour
     void Start()
     {
         _initPosition = transform.position;
+        _walkSFXLength = _walkSFX.length;
 
         Reset();
     }
@@ -169,6 +192,17 @@ public class PackManController : MonoBehaviour
                     _destination = transform.position + _nextPos;
                 }
             }
+        }
+        else
+        {
+            _lastWalkTime -= Time.deltaTime;
+            if(_lastWalkTime < 0)
+            {
+                _lastWalkTime += _walkSFXLength;
+                _audioSource.clip = _walkSFX;
+                _audioSource.Play();
+            }
+            
         }
     }
 
@@ -279,7 +313,7 @@ public class PackManController : MonoBehaviour
         _getScoreText.gameObject.SetActive(true);
         _getScoreText.text = getScore.ToString();
 
-        Vector3 textPosition = transform.position + new Vector3(0, 2, 0);
+        Vector3 textPosition = transform.position + _getScoreTextPositionOffset;
         Vector3 screenPos = _mainCamera.WorldToScreenPoint(textPosition);
         _getScoreText.transform.position = screenPos;
 

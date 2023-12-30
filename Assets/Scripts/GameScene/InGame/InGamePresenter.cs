@@ -32,6 +32,34 @@ public class InGamePresenter : MonoBehaviour
     private GhostManager _ghostManager;
 
     /// <summary>
+    /// オーディオソース
+    /// </summary>
+    [SerializeField]
+    private AudioSource _audioSource;
+
+    /// <summary>
+    /// 敵が歩いている効果音
+    /// </summary>
+    [SerializeField]
+    private AudioClip _enemyWalkSFX;
+
+    /// <summary>
+    /// 敵が歩く効果音の長さ
+    /// </summary>
+    private float _enemyWalkSFXLenght;
+
+    /// <summary>
+    /// 最後に敵が歩く効果音を鳴らした時
+    /// </summary>
+    private float _lastEnemyWalkSFXTime = 0;
+
+    /// <summary>
+    /// ゲーム開始時の効果音
+    /// </summary>
+    [SerializeField]
+    private AudioClip _startSFX;
+
+    /// <summary>
     /// ゲームが開始されているかどうか
     /// </summary>
     private bool _isStart;
@@ -39,6 +67,11 @@ public class InGamePresenter : MonoBehaviour
     private void Start()
     {
         _view.Initialize();
+
+        _enemyWalkSFXLenght = _enemyWalkSFX.length;
+
+        _audioSource.clip = _startSFX;
+        _audioSource.Play();
 
         Bind();
         SetEvent();
@@ -79,6 +112,14 @@ public class InGamePresenter : MonoBehaviour
         if (!_isStart || _packMan.IsEnemyHit || _packMan.IsEnemyEat)
             return;
 
+        _lastEnemyWalkSFXTime -= Time.deltaTime;
+        if(_lastEnemyWalkSFXTime < 0)
+        {
+            _lastEnemyWalkSFXTime += _enemyWalkSFXLenght;
+            _audioSource.clip = _enemyWalkSFX;
+            _audioSource.Play();
+        }
+
         foreach(var enemy in _enemy)
         {
             enemy.ManualUpdate(deltaTime);
@@ -94,5 +135,7 @@ public class InGamePresenter : MonoBehaviour
     private void Reset()
     {
         _view.ResetView();
+
+        _lastEnemyWalkSFXTime = 0;
     }
 }

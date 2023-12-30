@@ -96,6 +96,12 @@ public class PackManController : MonoBehaviour
     private float _lastWalkTime;
 
     /// <summary>
+    /// パックマンが消滅するときの効果音
+    /// </summary>
+    [SerializeField]
+    private AudioClip _loseLifeSFX;
+
+    /// <summary>
     /// 敵を食べた回数
     /// </summary>
     private int _eatEnemyAmount = 0;
@@ -333,6 +339,8 @@ public class PackManController : MonoBehaviour
 
         //消滅するエフェクトを生成
         EffectCreate(_vanishingEffectPrefab);
+        _audioSource.clip = _loseLifeSFX;
+        _audioSource.Play();
 
         await UniTask.WaitForSeconds(DELEY_RESTART_TIME);
 

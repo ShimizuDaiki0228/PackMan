@@ -156,6 +156,7 @@ public class GameManager : MonoBehaviour
         _scoreProp.Value = 0;
         _levelProp.Value = 0;
         _lifesProp.Value = 2;
+        _pelletAmount = 0;
 
         IsHighScoreUpdate = false;
     }

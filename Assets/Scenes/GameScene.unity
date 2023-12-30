@@ -964,10 +964,10 @@ RectTransform:
   m_Father: {fileID: 1999709765}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 21.125, y: 34.25}
-  m_SizeDelta: {x: -636, y: -418}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 447.125, y: -205.25}
+  m_SizeDelta: {x: 216, y: 61}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &118133297
 PrefabInstance:
@@ -13427,7 +13427,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 1814113513}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -13813,6 +13813,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c97fb8d4f05b57348a9b289b3914a844, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HighScore: 0
+  IsHighScoreUpdate: 0
 --- !u!1001 &2951913207614485739
 PrefabInstance:
   m_ObjectHideFlags: 0

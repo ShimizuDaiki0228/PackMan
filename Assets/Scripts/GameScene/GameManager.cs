@@ -24,6 +24,11 @@ public class GameManager : MonoBehaviour
     public int Score => _scoreProp.Value;
 
     /// <summary>
+    /// ハイスコア
+    /// </summary>
+    public int HighScore;
+
+    /// <summary>
     /// レベル
     /// </summary>
     private ReactiveProperty<int> _levelProp;
@@ -51,6 +56,8 @@ public class GameManager : MonoBehaviour
     public IObservable<Unit> OnLoseLifeAsObservable
         => _onLoseLifeSubject.AsObservable();
 
+    public bool IsHighScoreUpdate;
+
     private void Awake()
     {
         if (Instance == null)
@@ -65,7 +72,9 @@ public class GameManager : MonoBehaviour
 
         _scoreProp = new ReactiveProperty<int>(0);
         _levelProp = new ReactiveProperty<int>(1);
-        _lifesProp = new ReactiveProperty<int>(2);
+        _lifesProp = new ReactiveProperty<int>(1);
+
+        HighScore = PlayerPrefs.GetInt("HighScore", 0);
     }
 
     /// <summary>
@@ -119,8 +128,12 @@ public class GameManager : MonoBehaviour
         _lifesProp.Value--;
         if (Life <= 0)
         {
-            ScoreController.Level = Level;
-            ScoreController.Score = Score;
+            if(HighScore < Score)
+            {
+                PlayerPrefs.SetInt("HighScore", Score);
+                HighScore = Score;
+                IsHighScoreUpdate = true;
+            }
 
             return;
         }
@@ -143,5 +156,7 @@ public class GameManager : MonoBehaviour
         _scoreProp.Value = 0;
         _levelProp.Value = 0;
         _lifesProp.Value = 2;
+
+        IsHighScoreUpdate = false;
     }
 }

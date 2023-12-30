@@ -13,11 +13,6 @@ public class MainSceneView : MonoBehaviour
     private CanvasGroup _instructionText;
 
     /// <summary>
-    /// テキストの透明度が変わる時間
-    /// </summary>
-    private const float TEXT_FADE_DURATION = 1.0f;
-
-    /// <summary>
     /// テキストの透明度のアニメーションを行うシーケンス
     /// </summary>
     private Sequence _instructionTextFadeSequence;
@@ -27,11 +22,8 @@ public class MainSceneView : MonoBehaviour
     /// </summary>
     public void Initialize()
     {
-        _instructionTextFadeSequence = DOTween.Sequence();
-
-        _instructionTextFadeSequence.Append(_instructionText.DOFade(0, TEXT_FADE_DURATION)).SetEase(Ease.InOutQuad);
-        _instructionTextFadeSequence.Append(_instructionText.DOFade(1, TEXT_FADE_DURATION)).SetEase(Ease.InOutQuad);
-
-        _instructionTextFadeSequence.SetLoops(-1).SetLink(gameObject);
+        Sequence sequence = AnimationUtility.TextFadeAnimation(_instructionText,
+                                                               InGameConst.TEXT_FADE_DURATION,
+                                                               gameObject);
     }
 }

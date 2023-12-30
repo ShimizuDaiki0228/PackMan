@@ -80,7 +80,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3175461358331951328, guid: 224baca50d8833f4497d9441bf6b846a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.5
+      value: 6.3215675
       objectReference: {fileID: 0}
     - target: {fileID: 3175461358331951328, guid: 224baca50d8833f4497d9441bf6b846a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -121,6 +121,10 @@ PrefabInstance:
     - target: {fileID: 4018615839355720868, guid: 224baca50d8833f4497d9441bf6b846a, type: 3}
       propertyPath: m_Name
       value: Pinky Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 8068631343147356759, guid: 224baca50d8833f4497d9441bf6b846a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8137107851730058750, guid: 224baca50d8833f4497d9441bf6b846a, type: 3}
       propertyPath: m_LocalScale.x

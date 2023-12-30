@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniRx", "UniRx.csproj", "{B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniTask", "UniTask.csproj", "{622978BA-462C-6EFC-CB2E-968B0885B891}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor-firstpass", "Assembly-CSharp-Editor-firstpass.csproj", "{DEBD4591-FE84-8FF4-054C-1365A512FA54}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{228E2A19-58DE-4B99-7808-8EB4AAFD85D7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-firstpass", "Assembly-CSharp-firstpass.csproj", "{32408082-79DB-7AF2-E9FA-B27CEC87B949}"
@@ -41,6 +43,10 @@ Global
 		{622978BA-462C-6EFC-CB2E-968B0885B891}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{622978BA-462C-6EFC-CB2E-968B0885B891}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{622978BA-462C-6EFC-CB2E-968B0885B891}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEBD4591-FE84-8FF4-054C-1365A512FA54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEBD4591-FE84-8FF4-054C-1365A512FA54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEBD4591-FE84-8FF4-054C-1365A512FA54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEBD4591-FE84-8FF4-054C-1365A512FA54}.Release|Any CPU.Build.0 = Release|Any CPU
 		{228E2A19-58DE-4B99-7808-8EB4AAFD85D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{228E2A19-58DE-4B99-7808-8EB4AAFD85D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{228E2A19-58DE-4B99-7808-8EB4AAFD85D7}.Release|Any CPU.ActiveCfg = Release|Any CPU

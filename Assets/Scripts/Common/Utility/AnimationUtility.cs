@@ -33,6 +33,24 @@ public static class AnimationUtility
     }
 
     /// <summary>
+    /// テキストを回転させるアニメーション
+    /// </summary>
+    /// <param name="rotateVector3">どこまで回転させるか</param>
+    /// <param name="duration">どれだけ時間をかけて回転させるか</param>
+    /// <returns></returns>
+    public static Tween RotateTextAnimation(Text text,
+                                            Vector3 rotateVector3,
+                                            float duration)
+    {
+        return text.transform.DOLocalRotate(rotateVector3, duration, RotateMode.FastBeyond360)
+                    .SetEase(Ease.Linear)
+                    .SetLoops(-1, LoopType.Restart);
+    }
+
+
+
+
+    /// <summary>
     /// テキストをフェードさせるアニメーション
     /// </summary>
     /// <param name="canvasGroup">テキストのCanvasGroup</param>
@@ -98,5 +116,25 @@ public static class AnimationUtility
         }
 
         return sequence;
+    }
+
+
+    public static void RotateTextMeshProAnimationSequence(DOTweenTMPAnimator tmproAnimator,
+                                                              float duration)
+    {
+        const float EACH_DELAY_RATIO = 0.01f;
+        var eachDelay = duration * EACH_DELAY_RATIO;
+        var eachDuration = duration - eachDelay;
+
+        Sequence sequence = DOTween.Sequence();
+
+        for (var i = 0; i < tmproAnimator.textInfo.characterCount; i++)
+        {
+            DOTween.Sequence()
+                .Append(tmproAnimator.DORotateChar(i, Vector3.right * 360, eachDuration / 2, RotateMode.FastBeyond360))
+                .AppendInterval(eachDuration / 4)
+
+                .SetDelay((eachDelay / 1) * i);
+        }
     }
 }

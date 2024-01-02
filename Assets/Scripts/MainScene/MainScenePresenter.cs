@@ -25,6 +25,19 @@ public class MainScenePresenter : MonoBehaviour
     [SerializeField]
     private GhostControllerMain[] _ghostControllerMainList;
 
+    /// <summary>
+    /// 餌
+    /// </summary>
+    [SerializeField]
+    private GameObject _pellet;
+
+    /// <summary>
+    /// でかいパックマン
+    /// プレイボタンをクリックした後に出てくる
+    /// </summary>
+    [SerializeField]
+    private BigPackManController _bigPackMan;
+
     private void Start()
     {
         _view.Initialize();
@@ -42,20 +55,16 @@ public class MainScenePresenter : MonoBehaviour
 
         _view.PlayButton.OnClickAsObservable()
             .Subscribe(_ =>
-                ChangeScene()
+            {
+                _view.IsPlayButtonClickedProp.Value = true;
+                ChangeScene();
+            }
             ).AddTo(this);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            UniTask.WaitForSeconds(1);
-
-            ChangeScene();
-        }
-
         if (_packManMain.IsEnemyHit)
             return;
 
@@ -64,6 +73,11 @@ public class MainScenePresenter : MonoBehaviour
         foreach(var ghost in _ghostControllerMainList)
         {
             ghost.ManualUpdate();
+        }
+
+        if(_view.IsPlayButtonClicked)
+        {
+            _bigPackMan.ManualUpdate();
         }
     }
 
@@ -75,7 +89,17 @@ public class MainScenePresenter : MonoBehaviour
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = (currentSceneIndex + 1) % SceneManager.sceneCountInBuildSettings; // ループするためにモジュロ演算子を使用
 
-        SceneManager.LoadScene(nextSceneIndex);
+        _packManMain.gameObject.SetActive(false);
+        foreach(var ghost in _ghostControllerMainList)
+        {
+            ghost.gameObject.SetActive(false);
+        }
+        _pellet.SetActive(false);
+
+
+
+        UniTask.WaitForSeconds(5);
+        //SceneManager.LoadScene(nextSceneIndex);
 
         if (GameManager.Instance != null)
         {

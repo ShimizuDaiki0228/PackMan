@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +9,7 @@ using UnityEngine.UI;
 public class PackManControllerMain : MonoBehaviour
 {
     [SerializeField]
-    private Text _scoreText;
+    private TextMeshProUGUI _scoreText;
 
     [SerializeField]
     private Camera _mainCamera;

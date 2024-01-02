@@ -53,7 +53,7 @@ public static class AnimationUtility
     /// <param name="rotateVector3">‚Ç‚±‚Ü‚Å‰ñ“]‚³‚¹‚é‚©</param>
     /// <param name="duration">‚Ç‚ê‚¾‚¯ŽžŠÔ‚ð‚©‚¯‚Ä‰ñ“]‚³‚¹‚é‚©</param>
     /// <returns></returns>
-    public static Tween RotateTextAnimation(Text text,
+    public static Tween RotateTextAnimation(TextMeshProUGUI text,
                                             Vector3 rotateVector3,
                                             float duration)
     {

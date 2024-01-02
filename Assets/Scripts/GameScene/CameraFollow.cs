@@ -1,9 +1,6 @@
 using Cysharp.Threading.Tasks;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditorInternal;
-using UnityEngine;
 using UniRx;
+using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {

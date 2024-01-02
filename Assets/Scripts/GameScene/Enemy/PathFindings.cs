@@ -1,10 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Xml.Schema;
-using TMPro.EditorUtilities;
-using Unity.PlasticSCM.Editor.WebApi;
-using UnityEngine;
 using UniRx;
+using UnityEngine;
 
 /// <summary>
 /// ステートマシン
@@ -115,10 +111,10 @@ public class PathFindings : MonoBehaviour
 
         _openList.Add(startNode);
 
-        while(_openList.Count > 0)
+        while (_openList.Count > 0)
         {
             Node currentNode = _openList[0];
-            for(int i = 1; i< _openList.Count; i++)
+            for (int i = 1; i < _openList.Count; i++)
             {
                 if (_openList[i].FCost < currentNode.FCost || _openList[i].FCost == currentNode.FCost && _openList[i].HCost < currentNode.HCost)
                 {
@@ -128,27 +124,27 @@ public class PathFindings : MonoBehaviour
             _openList.Remove(currentNode);
             _closedList.Add(currentNode);
 
-            if(currentNode == goalNode)
+            if (currentNode == goalNode)
             {
                 PathTracer(startNode, goalNode);
                 return;
             }
 
-            foreach(Node neighbour in _grid.GetNeighborNodes(currentNode))
+            foreach (Node neighbour in _grid.GetNeighborNodes(currentNode))
             {
-                if(!neighbour.Walkable || _closedList.Contains(neighbour) || neighbour == _lastVisitedNode)
+                if (!neighbour.Walkable || _closedList.Contains(neighbour) || neighbour == _lastVisitedNode)
                 {
                     continue;
                 }
 
                 int calcMoveCost = currentNode.GCost + GetDistance(currentNode, neighbour);
-                if(calcMoveCost < neighbour.GCost || !_openList.Contains(neighbour))
+                if (calcMoveCost < neighbour.GCost || !_openList.Contains(neighbour))
                 {
                     neighbour.GCost = calcMoveCost;
                     neighbour.HCost = GetDistance(neighbour, goalNode);
 
                     neighbour.ParentNode = currentNode;
-                    if(!_openList.Contains(neighbour))
+                    if (!_openList.Contains(neighbour))
                     {
                         _openList.Add(neighbour);
                     }
@@ -185,12 +181,12 @@ public class PathFindings : MonoBehaviour
 
     private void Move()
     {
-        transform.position = Vector3.MoveTowards(transform.position, _destination, (_speed + 0.3f * GameManager.Instance.Level)  * Time.deltaTime);
-        if(Vector3.Distance(transform.position, _destination) < 0.0001f)
+        transform.position = Vector3.MoveTowards(transform.position, _destination, (_speed + 0.3f * GameManager.Instance.Level) * Time.deltaTime);
+        if (Vector3.Distance(transform.position, _destination) < 0.0001f)
         {
             FindThePath();
 
-            if(_path.Count > 0)
+            if (_path.Count > 0)
             {
                 //目的地
                 _nextPos = _grid.NextPathPoint(_path[0]);
@@ -212,18 +208,18 @@ public class PathFindings : MonoBehaviour
         int dirZ = (int)(_nextPos.z - transform.position.z);
 
         //縦方向
-        if(dirX == 0)
+        if (dirX == 0)
         {
             //上方向
             if (dirZ > 0)
                 _currentDirection = InGameConst.Up;
 
             //下方向
-            else if(dirZ < 0)
+            else if (dirZ < 0)
                 _currentDirection = InGameConst.Down;
         }
         //横方向
-        else if(dirZ == 0)
+        else if (dirZ == 0)
         {
             if (dirX > 0)
                 _currentDirection = InGameConst.Right;
@@ -235,7 +231,7 @@ public class PathFindings : MonoBehaviour
 
     protected virtual void CheckState()
     {
-        switch(State)
+        switch (State)
         {
             case GhostStates.HOME:
                 _speed = 1.5f;
@@ -243,10 +239,10 @@ public class PathFindings : MonoBehaviour
                 TargetContainsCheck(_homeTarget);
                 SetTarget(_homeTarget);
 
-                if(Released)
+                if (Released)
                 {
                     _currentTimer += Time.deltaTime;
-                    if( _currentTimer >= HOME_TIMER)
+                    if (_currentTimer >= HOME_TIMER)
                     {
                         _currentTimer = 0;
                         StateProp.Value = GhostStates.CHASE;
@@ -334,10 +330,10 @@ public class PathFindings : MonoBehaviour
     {
         int activeAppearanceNumber;
 
-        if(state == GhostStates.HOME || state == GhostStates.LEAVING_HOME || state == GhostStates.CHASE || state == GhostStates.SCATTER)
+        if (state == GhostStates.HOME || state == GhostStates.LEAVING_HOME || state == GhostStates.CHASE || state == GhostStates.SCATTER)
             activeAppearanceNumber = 0;
 
-        else if(state == GhostStates.FRIGHTEND)
+        else if (state == GhostStates.FRIGHTEND)
             activeAppearanceNumber = 1;
 
         else

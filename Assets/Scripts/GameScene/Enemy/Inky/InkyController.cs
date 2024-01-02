@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class InkyController : PathFindings
@@ -20,7 +17,7 @@ public class InkyController : PathFindings
     {
         base.CheckState();
 
-        if(State == GhostStates.CHASE)
+        if (State == GhostStates.CHASE)
         {
             Behaviour();
         }

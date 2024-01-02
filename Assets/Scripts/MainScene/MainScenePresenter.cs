@@ -29,15 +29,20 @@ public class MainScenePresenter : MonoBehaviour
     {
         _view.Initialize();
 
-        Bind();
+        SetEvent();
     }
 
-    private void Bind()
+    private void SetEvent()
     {
         _packManMain.IsPowerPelletHitProp
             .Where(isHit => isHit)
             .Subscribe(_ =>
                 ChangeEnemyFrightenMode()
+            ).AddTo(this);
+
+        _view.PlayButton.OnClickAsObservable()
+            .Subscribe(_ =>
+                ChangeScene()
             ).AddTo(this);
     }
 

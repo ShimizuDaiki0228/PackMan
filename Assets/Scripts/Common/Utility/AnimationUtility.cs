@@ -9,6 +9,21 @@ using Unity.VisualScripting.Antlr3.Runtime;
 public static class AnimationUtility
 {
     /// <summary>
+    /// 通常時のボタンのサイズ
+    /// </summary>
+    private static readonly float NormalButtonMaxSize = 1f;
+
+    /// <summary>
+    /// マウスポインタが上にある時のボタンのサイズ
+    /// </summary>
+    private static readonly float NormalButtonMinSize = 0.8f;
+
+    /// <summary>
+    /// マウスポインタによってボタンのサイズが変更するときにかかる時間
+    /// </summary>
+    private static readonly float ButtonScaleChangeTime = 0.3f;
+
+    /// <summary>
     /// テキストを一文字ずつ表示する
     /// </summary>
     /// <param name="text">テキスト</param>
@@ -118,7 +133,54 @@ public static class AnimationUtility
         return sequence;
     }
 
+    /// <summary>
+    /// ボタンのアウトラインの色を変更する
+    /// </summary>
+    /// <param name="outline"></param>
+    /// <returns></returns>
+    public static Sequence OutlineColorChangeSequence(Outline outline)
+    {
+        Sequence sequence = DOTween.Sequence();
 
+        sequence
+            .Append(DOTween.To(() => outline.effectColor, x => outline.effectColor = x, Color.red, 1f))
+            .Append(DOTween.To(() => outline.effectColor, x => outline.effectColor = x, Color.yellow, 1f))
+            .Append(DOTween.To(() => outline.effectColor, x => outline.effectColor = x, Color.green, 1f))
+            .Append(DOTween.To(() => outline.effectColor, x => outline.effectColor = x, Color.blue, 1f))
+            .Append(DOTween.To(() => outline.effectColor, x => outline.effectColor = x, Color.red, 1f))
+            .SetLoops(-1) 
+            .Play();
+
+        return sequence;
+    }
+
+    /// <summary>
+    /// ボタンの上にマウスポイントが来た時のTween
+    /// </summary>
+    public static void OnPointerEnterButtonTween(Transform buttonTransform)
+    {
+        float tweenTime =
+            ButtonScaleChangeTime * (buttonTransform.localScale.x / NormalButtonMaxSize);
+
+        buttonTransform.DOScale(NormalButtonMinSize, tweenTime).SetEase(Ease.OutQuint);
+    }
+
+    /// <summary>
+    /// ボタンの上からマウスポイントが外れた時のTween
+    /// </summary>
+    public static void OnPointerExitButtonTween(Transform buttonTransform)
+    {
+        float tweenTime =
+            ButtonScaleChangeTime * (NormalButtonMinSize / buttonTransform.localScale.x);
+
+        buttonTransform.DOScale(NormalButtonMaxSize, tweenTime).SetEase(Ease.OutQuint);
+    }
+
+    /// <summary>
+    /// テキストを定期的に回転させるアニメーションシーケンス
+    /// </summary>
+    /// <param name="tmproAnimator"></param>
+    /// <param name="duration"></param>
     public static void RotateTextMeshProAnimationSequence(DOTweenTMPAnimator tmproAnimator,
                                                               float duration)
     {

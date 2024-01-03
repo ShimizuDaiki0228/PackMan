@@ -338,26 +338,13 @@ public class PackManController : MonoBehaviour
         await gameObject.transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InBack);
 
         //消滅するエフェクトを生成
-        EffectCreate(_vanishingEffectPrefab);
+        MonobehaviourUtility.Instance.EffectCreate(_vanishingEffectPrefab, this.transform.position);
         _audioSource.clip = _loseLifeSFX;
         _audioSource.Play();
 
         await UniTask.WaitForSeconds(DELEY_RESTART_TIME);
 
         gameObject.transform.localScale = Vector3.one;
-    }
-
-    /// <summary>
-    /// エフェクトを生成する
-    /// エフェクトのStart Life Timeを過ぎると破棄する
-    /// </summary>
-    private void EffectCreate(GameObject effectPrefab)
-    {
-        var effect = Instantiate(effectPrefab, transform.position, Quaternion.identity);
-        var mainModule = effectPrefab.GetComponent<ParticleSystem>().main;
-        float lifeTime = mainModule.startLifetime.constant;
-
-        Destroy(effect, lifeTime);
     }
 
     /// <summary>

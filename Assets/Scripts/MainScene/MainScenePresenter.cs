@@ -53,12 +53,10 @@ public class MainScenePresenter : MonoBehaviour
                 ChangeEnemyFrightenMode()
             ).AddTo(this);
 
-        _view.PlayButton.OnClickAsObservable()
+        _view.IsPlayButtonClickedProp
+            .Where(isClicked => isClicked)
             .Subscribe(_ =>
-            {
-                _view.IsPlayButtonClickedProp.Value = true;
-                ChangeScene();
-            }
+                ChangeScene()
             ).AddTo(this);
     }
 
@@ -92,9 +90,17 @@ public class MainScenePresenter : MonoBehaviour
         _packManMain.gameObject.SetActive(false);
         foreach(var ghost in _ghostControllerMainList)
         {
-            ghost.gameObject.SetActive(false);
+            if(ghost.gameObject.activeSelf)
+                ghost.gameObject.SetActive(false);
         }
-        _pellet.SetActive(false);
+
+        if(_pellet != null)
+        {
+            if(_pellet.gameObject.activeSelf)
+            {
+                _pellet.SetActive(false);
+            }
+        }
 
 
 

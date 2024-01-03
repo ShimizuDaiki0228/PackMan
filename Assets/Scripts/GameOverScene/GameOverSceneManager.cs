@@ -145,8 +145,8 @@ public class GameOverSceneManager : MonoBehaviour
         {
             NewHighScore().Forget();
 
-            EffectCreate(_kirakiraEffect, _highScoreText.transform.position);
-            EffectCreate(_newHighScoreEffect, _highScoreText.transform.position);
+            MonobehaviourUtility.Instance.EffectCreate(_kirakiraEffect, _highScoreText.transform.position);
+            MonobehaviourUtility.Instance.EffectCreate(_newHighScoreEffect, _highScoreText.transform.position);
         }
 
         _isNextReady = true;
@@ -190,14 +190,5 @@ public class GameOverSceneManager : MonoBehaviour
             int nextSceneIndex = (currentSceneIndex + 1) % SceneManager.sceneCountInBuildSettings; // ループするためにモジュロ演算子を使用
             SceneManager.LoadScene(nextSceneIndex);
         }
-    }
-
-    private void EffectCreate(GameObject effectPrefab, Vector3 createPosition)
-    {
-        var effect = Instantiate(effectPrefab, createPosition, Quaternion.identity);
-        var mainModule = effectPrefab.GetComponent<ParticleSystem>().main;
-        float lifeTime = mainModule.startLifetime.constant;
-
-        Destroy(effect, lifeTime);
     }
 }

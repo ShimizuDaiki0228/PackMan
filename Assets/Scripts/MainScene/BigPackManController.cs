@@ -9,6 +9,6 @@ public class BigPackManController : MonoBehaviour
     /// </summary>
     public void ManualUpdate()
     {
-        gameObject.transform.position += new Vector3(5, 0, 0) * Time.deltaTime;
+        gameObject.transform.position += new Vector3(7, 0, 0) * Time.deltaTime;
     }
 }

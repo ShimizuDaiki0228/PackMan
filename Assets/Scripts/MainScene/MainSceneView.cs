@@ -90,8 +90,20 @@ public class MainSceneView : MonoBehaviour
     /// <summary>
     /// プレイボタンがクリックされたかどうか
     /// </summary>
-    public ReactiveProperty<bool> IsPlayButtonClickedProp;
-    public bool IsPlayButtonClicked => IsPlayButtonClickedProp.Value;
+    private readonly ReactiveProperty<bool> _isPlayButtonClickedProp = new ReactiveProperty<bool>(false);
+    public ReactiveProperty<bool> IsPlayButtonClickedProp => _isPlayButtonClickedProp;
+    public bool IsPlayButtonClicked => _isPlayButtonClickedProp.Value;
+
+    /// <summary>
+    /// ボタンクリック時のエフェクト
+    /// </summary>
+    [SerializeField]
+    private GameObject _clickEffect;
+
+    /// <summary>
+    /// クリックエフェクトの時間
+    /// </summary>
+    private float _clickEffectDuration; 
 
     /// <summary>
     /// 初期化
@@ -106,6 +118,9 @@ public class MainSceneView : MonoBehaviour
 
         _highScoreText.text = GameManager.Instance.HighScore.ToString();
 
+        var mainModule = _clickEffect.GetComponent<ParticleSystem>().main;
+        _clickEffectDuration = mainModule.startLifetime.constant;
+
         ButtonSetup();
 
         TextSetup();
@@ -117,18 +132,21 @@ public class MainSceneView : MonoBehaviour
     /// <summary>
     /// イベント設定
     /// </summary>
-    private void SetEvent()
+    private async void SetEvent()
     {
         PlayButton.onClick.AsObservable()
-            .Subscribe(_ =>
-                ClickPlayButton()
+            .Subscribe(async _ =>
+            {
+                AfterPlayButtonClick();
+                MonobehaviourUtility.Instance.EffectCreate(_clickEffect, PlayButton.transform.position);
+
+                await UniTask.WaitForSeconds(_clickEffectDuration);
+
+                _isPlayButtonClickedProp.Value = true;
+                ClickPlayButton();
+            }
             ).AddTo(this);
 
-        IsPlayButtonClickedProp
-            .Where(isClicked => isClicked)
-            .Subscribe(_ =>
-                AfterPlayButtonClick()
-            ).AddTo(this);
     }
 
     /// <summary>
@@ -216,10 +234,7 @@ public class MainSceneView : MonoBehaviour
     {
         if(!IsPlayButtonClicked)
         {
-            AnimationUtility.OnPointerExitButtonTween(button);
-
-            outlineSequence.Pause();
-            outline.effectColor = Color.white;
+            UndoButton(outlineSequence, outline, button);
         }
     }
 
@@ -228,9 +243,21 @@ public class MainSceneView : MonoBehaviour
     /// </summary>
     private void AfterPlayButtonClick()
     {
-        AnimationUtility.OnPointerExitButtonTween(PlayButton.transform);
+        UndoButton(_playButtonOutlineSequence, _playButtonOutline, PlayButton.transform);
+    }
 
-        _playButtonOutlineSequence.Pause();
+    /// <summary>
+    /// ボタンを元の状態に戻す
+    /// </summary>
+    /// <param name="sequence"></param>
+    /// <param name="outline"></param>
+    /// <param name="transform"></param>
+    private void UndoButton(Sequence sequence, Outline outline, Transform transform)
+    {
+        AnimationUtility.OnPointerExitButtonTween(transform);
+
+        sequence.Pause();
+        outline.effectColor = Color.white;
     }
 
     /// <summary>
@@ -254,7 +281,7 @@ public class MainSceneView : MonoBehaviour
     private void EscapeText(TextMeshProUGUI text)
     {
         text.color = new Color(1, 0, 1);
-        text.rectTransform.DOAnchorPosX(text.rectTransform.anchoredPosition.x + 1.5f, Time.deltaTime)
+        text.rectTransform.DOAnchorPosX(text.rectTransform.anchoredPosition.x + 1.3f, Time.deltaTime)
             .SetEase(Ease.Linear) // 線形の動き
             .SetLoops(-1, LoopType.Incremental)
             .SetLink(gameObject);
@@ -268,7 +295,7 @@ public class MainSceneView : MonoBehaviour
         outline.effectColor = new Color(1, 0, 1);
 
         text.color = new Color(1, 0, 1);
-        button.transform.DOMoveX(button.transform.position.x + 3.5f, Time.deltaTime)
+        button.transform.DOMoveX(button.transform.position.x + 0.4f, Time.deltaTime)
             .SetEase(Ease.Linear) // 線形の動き
             .SetLoops(-1, LoopType.Incremental)
             .SetLink(gameObject);

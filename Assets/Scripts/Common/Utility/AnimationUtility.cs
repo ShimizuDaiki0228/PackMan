@@ -5,6 +5,8 @@ using DG.Tweening;
 using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting.Antlr3.Runtime;
+using UnityEngine.UIElements;
+using static System.Net.Mime.MediaTypeNames;
 
 public static class AnimationUtility
 {
@@ -61,9 +63,6 @@ public static class AnimationUtility
                     .SetEase(Ease.Linear)
                     .SetLoops(-1, LoopType.Restart);
     }
-
-
-
 
     /// <summary>
     /// テキストをフェードさせるアニメーション

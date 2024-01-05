@@ -25,12 +25,19 @@ public class RuleSceneView : MonoBehaviour
     private OperationInstructionView _operationInstructionView;
 
     /// <summary>
+    /// RuleExplanationView
+    /// </summary>
+    [SerializeField]
+    private RuleExplanationView _ruleExplanationView;
+
+    /// <summary>
     /// èâä˙âª
     /// </summary>
     public void Initialize()
     {
         _characterExplanationView.Initialize();
         _operationInstructionView.Initialize();
+        _ruleExplanationView.Initialize();
     }
 
     /// <summary>
@@ -52,6 +59,10 @@ public class RuleSceneView : MonoBehaviour
                                                  RuleSceneAnimationUtility.LeftPanelDisplaySlide);
 
         _operationInstructionView.SlideAnimation(RuleSceneAnimationUtility.Direction.LEFT,
+                                                 RuleSceneAnimationUtility.LeftObjectDisplaySlide,
+                                                 RuleSceneAnimationUtility.LeftPanelDisplaySlide);
+
+        _ruleExplanationView.SlideAnimation(RuleSceneAnimationUtility.Direction.LEFT,
                                                  RuleSceneAnimationUtility.LeftObjectDisplaySlide,
                                                  RuleSceneAnimationUtility.LeftPanelDisplaySlide);
 

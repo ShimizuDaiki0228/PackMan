@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,7 +22,7 @@ public class RuleScenePresenter : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            _view.CanvasSlide();
+            _view.CanvasSlide().Forget();
         }
     }
 }

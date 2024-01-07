@@ -73,7 +73,9 @@ public class RuleSceneView : MonoBehaviour
         _rightArrowCanvasGroup.alpha = 0;
         _leftArrowCanvasGroup.alpha = 0;
 
-        Sequence sequence = RuleSceneAnimationUtility.ArrowImageAnimation(_rightArrowImage.rectTransform,
+        ArrowActiveChange(true, false);
+
+        RuleSceneAnimationUtility.ArrowImageAnimation(_rightArrowImage.rectTransform,
                                                       _rightArrowCanvasGroup,
                                                       RuleSceneAnimationUtility.RightArrowMovePositionOffset,
                                                       gameObject);
@@ -92,6 +94,8 @@ public class RuleSceneView : MonoBehaviour
         _characterExplanationView.ManualUpdate();
         _operationInstructionView.ManualUpdate();
 
+        Debug.Log(_operationInstructionView.CanvasType);
+
         CanvasSlide().Forget();
     }
 
@@ -105,6 +109,8 @@ public class RuleSceneView : MonoBehaviour
             && !_isChanged)
         {
             _isChanged = true;
+
+            ArrowActiveChange(false, false);
 
             _characterExplanationView.SlideAnimation(RuleSceneAnimationUtility.Direction.LEFT,
                                                      RuleSceneAnimationUtility.LeftObjectDisplaySlide,
@@ -123,6 +129,8 @@ public class RuleSceneView : MonoBehaviour
             _operationInstructionView.CanvasType 
                 = ChangeCanvasType(_operationInstructionView.CanvasType, 1);
 
+            ArrowActiveChange(_operationInstructionView.CanvasType != DisplayCanvasType.RULE, true);
+
             _isChanged = false;
         }
 
@@ -131,6 +139,8 @@ public class RuleSceneView : MonoBehaviour
             && !_isChanged)
         {
             _isChanged = true;
+
+            ArrowActiveChange(false, false);
 
             _characterExplanationView.SlideAnimation(RuleSceneAnimationUtility.Direction.RIGHT,
                                                      -RuleSceneAnimationUtility.LeftObjectDisplaySlide,
@@ -149,6 +159,8 @@ public class RuleSceneView : MonoBehaviour
             _operationInstructionView.CanvasType
                 = ChangeCanvasType(_operationInstructionView.CanvasType, -1);
 
+            ArrowActiveChange(true, _operationInstructionView.CanvasType != DisplayCanvasType.CHARACTER);
+
             _isChanged = false;
         }
 
@@ -162,7 +174,18 @@ public class RuleSceneView : MonoBehaviour
     /// <returns></returns>
     private DisplayCanvasType ChangeCanvasType(DisplayCanvasType type, int value)
     {
-        int nextValue = (int)type + 1;
+        int nextValue = (int)type + value;
         return (DisplayCanvasType)nextValue;
+    }
+
+    /// <summary>
+    /// 右矢印画像と左矢印画像のアクティブを変更する
+    /// </summary>
+    /// <param name="rightActive"></param>
+    /// <param name="leftActive"></param>
+    private void ArrowActiveChange(bool rightActive, bool leftActive)
+    {
+        _rightArrowImage.gameObject.SetActive(rightActive);
+        _leftArrowImage.gameObject.SetActive(leftActive);
     }
 }

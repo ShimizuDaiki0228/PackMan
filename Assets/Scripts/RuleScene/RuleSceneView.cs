@@ -2,6 +2,8 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +16,12 @@ public enum DisplayCanvasType
 
 public class RuleSceneView : MonoBehaviour
 {
+    public enum SlideDirection
+    {
+        RIGHT,
+        LEFT
+    }
+
     /// <summary>
     /// CharacterExplanationView
     /// </summary>
@@ -70,6 +78,13 @@ public class RuleSceneView : MonoBehaviour
         _operationInstructionView.Initialize();
         _ruleExplanationView.Initialize();
 
+        
+        ArrowImageSetUp();
+        SetEvent();
+    }
+
+    private void ArrowImageSetUp()
+    {
         _rightArrowCanvasGroup.alpha = 0;
         _leftArrowCanvasGroup.alpha = 0;
 
@@ -81,9 +96,39 @@ public class RuleSceneView : MonoBehaviour
                                                       gameObject);
 
         RuleSceneAnimationUtility.ArrowImageAnimation(_leftArrowImage.rectTransform,
-                                                      _leftArrowCanvasGroup,                                  
+                                                      _leftArrowCanvasGroup,
                                                       RuleSceneAnimationUtility.LeftArrowMovePositionOffset,
                                                       gameObject);
+
+        
+    }
+
+    /// <summary>
+    /// イベント設定
+    /// </summary>
+    private void SetEvent()
+    {
+        //右シフトキーをクリックしたときの処理
+        this.UpdateAsObservable()
+            .Where(_ => Input.GetKeyDown(KeyCode.RightShift))
+            .Subscribe(_ => CanvasSlide(SlideDirection.RIGHT).Forget())
+            .AddTo(this);
+
+        //左シフトキーをクリックしたときの処理
+        this.UpdateAsObservable()
+            .Where(_ => Input.GetKeyDown(KeyCode.LeftShift))
+            .Subscribe(_ => CanvasSlide(SlideDirection.LEFT).Forget())
+            .AddTo(this);
+
+        //右矢印画像をマウスでクリックしたときの処理
+        _rightArrowImage.GetComponent<Button>().OnClickAsObservable()
+            .Subscribe(_ => CanvasSlide(SlideDirection.RIGHT).Forget())
+            .AddTo(this);
+
+        //左矢印画像をマウスでクリックしたときの処理
+        _leftArrowImage.GetComponent<Button>().OnClickAsObservable()
+            .Subscribe(_ => CanvasSlide(SlideDirection.LEFT).Forget())
+            .AddTo(this);
     }
 
     /// <summary>
@@ -93,18 +138,14 @@ public class RuleSceneView : MonoBehaviour
     {
         _characterExplanationView.ManualUpdate();
         _operationInstructionView.ManualUpdate();
-
-        Debug.Log(_operationInstructionView.CanvasType);
-
-        CanvasSlide().Forget();
     }
 
     /// <summary>
     /// 背景をスライドさせる
     /// </summary>
-    public async UniTask CanvasSlide()
+    public async UniTask CanvasSlide(SlideDirection slideDirection)
     {
-        if(Input.GetKeyDown(KeyCode.RightShift)
+        if(slideDirection == SlideDirection.RIGHT
             && _operationInstructionView.CanvasType != DisplayCanvasType.RULE
             && !_isChanged)
         {
@@ -134,7 +175,7 @@ public class RuleSceneView : MonoBehaviour
             _isChanged = false;
         }
 
-        else if(Input.GetKeyDown(KeyCode.LeftShift)
+        else if(slideDirection == SlideDirection.LEFT
             && _operationInstructionView.CanvasType != DisplayCanvasType.CHARACTER
             && !_isChanged)
         {

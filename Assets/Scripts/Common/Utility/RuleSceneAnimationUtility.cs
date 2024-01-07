@@ -20,6 +20,16 @@ public static class RuleSceneAnimationUtility
     }
 
     /// <summary>
+    /// 左矢印の元の場所から動く距離
+    /// </summary>
+    public static readonly Vector2 LeftArrowMovePositionOffset = new Vector2(-50, 0);
+
+    /// <summary>
+    /// 右矢印の元の場所から動く距離
+    /// </summary>
+    public static readonly Vector2 RightArrowMovePositionOffset = new Vector2(50, 0);
+
+    /// <summary>
     /// ルール説明シーンのパネルの最初の位置
     /// </summary>
     public static readonly Vector2 FirstPanelDisplayPosition = new Vector2(0, 1500);
@@ -73,6 +83,38 @@ public static class RuleSceneAnimationUtility
     /// 表示までにかける時間
     /// </summary>
     public const float DISPLAY_DURATION = 0.5f;
+
+    /// <summary>
+    /// 矢印の画像をアニメーションさせるシーケンス
+    /// </summary>
+    /// <param name="transform">画像のrectTransform</param>
+    /// <param name="canvasGroup">画像のcanvasGroup</param>
+    /// <param name="positionOffset">どれだけ移動させるか</param>
+    /// <param name="linkObject">リンクさせるオブジェクト</param>
+    /// <returns></returns>
+    public static Sequence ArrowImageAnimation(RectTransform transform,
+                                               CanvasGroup canvasGroup,
+                                               Vector2 positionOffset,
+                                               GameObject linkObject)
+    {
+
+        canvasGroup.alpha = 0f;
+
+        Sequence sequence = DOTween.Sequence();
+
+        Tween moveTween = transform.DOLocalMove(transform.anchoredPosition + positionOffset, 1f);
+
+        Tween fadeTween = canvasGroup.DOFade(1f, 1f);
+
+        sequence
+            .Append(moveTween)
+            .Join(fadeTween)
+            .AppendCallback(() => canvasGroup.alpha = 0)
+            .SetLoops(-1, LoopType.Restart)
+            .SetLink(linkObject);
+
+        return sequence;
+    }
 
     /// <summary>
     /// UIスライドアニメーション

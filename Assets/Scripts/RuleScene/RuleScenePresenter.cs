@@ -19,10 +19,5 @@ public class RuleScenePresenter : MonoBehaviour
     private void Update()
     {
         _view.ManualUpdate();
-
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            _view.CanvasSlide().Forget();
-        }
     }
 }

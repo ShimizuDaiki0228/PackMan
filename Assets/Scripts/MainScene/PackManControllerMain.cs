@@ -12,6 +12,9 @@ public class PackManControllerMain : MonoBehaviour
     private TextMeshProUGUI _scoreText;
 
     [SerializeField]
+    private Canvas _canvas;
+
+    [SerializeField]
     private Camera _mainCamera;
 
     private Animator _animator;
@@ -76,7 +79,10 @@ public class PackManControllerMain : MonoBehaviour
 
         Vector3 textPosition = transform.position + new Vector3(0, 2, 0);
         Vector3 screenPos = _mainCamera.WorldToScreenPoint(textPosition);
-        _scoreText.transform.position = screenPos;
+
+        // スクリーン座標を Canvas 座標に変換
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvas.transform as RectTransform, screenPos, _mainCamera, out Vector2 movePos);
+        _scoreText.rectTransform.anchoredPosition = movePos;
 
         await UniTask.WaitForSeconds(0.5f);
 

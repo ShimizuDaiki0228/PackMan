@@ -8,6 +8,7 @@ using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MainSceneView : MonoBehaviour
 {
@@ -68,6 +69,9 @@ public class MainSceneView : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _playButtonText;
 
+    /// <summary>
+    /// プレイボタンのアニメーションシーケンス
+    /// </summary>
     private Sequence _playButtonOutlineSequence;
 
     /// <summary>
@@ -86,6 +90,11 @@ public class MainSceneView : MonoBehaviour
     /// </summary>
     [SerializeField]
     private TextMeshProUGUI _ruleButtonText;
+
+    /// <summary>
+    /// ルールボタンのアニメーションシーケンス
+    /// </summary>
+    Sequence _ruleButtonOutlineSequence;
 
     /// <summary>
     /// プレイボタンがクリックされたかどうか
@@ -137,16 +146,30 @@ public class MainSceneView : MonoBehaviour
         PlayButton.onClick.AsObservable()
             .Subscribe(async _ =>
             {
-                AfterPlayButtonClick();
+                UndoButton(_playButtonOutlineSequence, _playButtonOutline, PlayButton.transform);
                 MonobehaviourUtility.Instance.EffectCreate(_clickEffect, PlayButton.transform.position);
 
                 await UniTask.WaitForSeconds(_clickEffectDuration);
 
                 _isPlayButtonClickedProp.Value = true;
                 ClickPlayButton();
+
+                await UniTask.WaitForSeconds(6f);
+
+                SceneManager.LoadScene("GameScene");
             }
             ).AddTo(this);
 
+        _ruleButton.onClick.AsObservable()
+            .Subscribe(async _ =>
+            {
+                UndoButton(_ruleButtonOutlineSequence, _ruleButtonOutline, _ruleButton.transform);
+                MonobehaviourUtility.Instance.EffectCreate(_clickEffect, _ruleButton.transform.position);
+
+                await UniTask.WaitForSeconds(_clickEffectDuration);
+
+                SceneManager.LoadScene("RuleScene");
+            }).AddTo(this);
     }
 
     /// <summary>
@@ -160,12 +183,12 @@ public class MainSceneView : MonoBehaviour
         _ruleButtonOutline = _ruleButton.gameObject.GetComponent<Outline>();
 
         _playButtonOutlineSequence = DOTween.Sequence();
-        Sequence ruleButtonOutlineSequence = DOTween.Sequence();
+        _ruleButtonOutlineSequence = DOTween.Sequence();
 
         _playButtonOutlineSequence = AnimationUtility.OutlineColorChangeSequence(_playButtonOutline);
         _playButtonOutlineSequence.Pause();
-        ruleButtonOutlineSequence = AnimationUtility.OutlineColorChangeSequence(_ruleButtonOutline);
-        ruleButtonOutlineSequence.Pause();
+        _ruleButtonOutlineSequence = AnimationUtility.OutlineColorChangeSequence(_ruleButtonOutline);
+        _ruleButtonOutlineSequence.Pause();
 
         //ボタンにマウスオーバーしたときのイベント購読
         playButtonEventTrigger.OnPointerEnterAsObservable()
@@ -173,7 +196,7 @@ public class MainSceneView : MonoBehaviour
             .AddTo(this);
 
         ruleButtonEventTrigger.OnPointerEnterAsObservable()
-            .Subscribe(_ => MouseEnterButton(ruleButtonOutlineSequence, _ruleButton.transform))
+            .Subscribe(_ => MouseEnterButton(_ruleButtonOutlineSequence, _ruleButton.transform))
             .AddTo(this);
 
         //ボタンからマウスが外れた時のイベント購読
@@ -182,7 +205,7 @@ public class MainSceneView : MonoBehaviour
         .AddTo(this);
 
         ruleButtonEventTrigger.OnPointerExitAsObservable()
-            .Subscribe(_ => MouseExitButton(ruleButtonOutlineSequence, _ruleButtonOutline, _ruleButton.transform))
+            .Subscribe(_ => MouseExitButton(_ruleButtonOutlineSequence, _ruleButtonOutline, _ruleButton.transform))
             .AddTo(this);
     }
 
@@ -236,14 +259,6 @@ public class MainSceneView : MonoBehaviour
         {
             UndoButton(outlineSequence, outline, button);
         }
-    }
-
-    /// <summary>
-    /// Playボタンを押した後に色や大きさを戻すように
-    /// </summary>
-    private void AfterPlayButtonClick()
-    {
-        UndoButton(_playButtonOutlineSequence, _playButtonOutline, PlayButton.transform);
     }
 
     /// <summary>

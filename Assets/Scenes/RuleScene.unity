@@ -1525,12 +1525,14 @@ MonoBehaviour:
   _characterExplanationView: {fileID: 1464060343}
   _operationInstructionView: {fileID: 2063862851}
   _ruleExplanationView: {fileID: 1344217822}
+  IsChanged: 0
   _rightArrowImage: {fileID: 979547385}
   _rightArrowCanvasGroup: {fileID: 979547387}
   _rightArrowInstructionText: {fileID: 1164273582}
   _leftArrowImage: {fileID: 1562462508}
   _leftArrowCanvasGroup: {fileID: 1562462510}
   _leftArrowInstructionText: {fileID: 1724697714}
+  _returnToMainSceneInstructionText: {fileID: 1570520158}
 --- !u!114 &937338716
 MonoBehaviour:
   m_ObjectHideFlags: 0

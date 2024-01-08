@@ -189,9 +189,7 @@ public class GameOverSceneManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) && _isNextReady)
         {
-            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            int nextSceneIndex = (currentSceneIndex + 1) % SceneManager.sceneCountInBuildSettings; // ループするためにモジュロ演算子を使用
-            SceneManager.LoadScene(nextSceneIndex);
+            SceneManager.LoadScene("MainScene");
         }
     }
 }

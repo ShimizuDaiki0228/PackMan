@@ -44,7 +44,7 @@ public class RuleSceneView : MonoBehaviour
     /// <summary>
     /// 背景を変更中かどうか
     /// </summary>
-    private bool _isChanged;
+    public bool IsChanged;
 
     /// <summary>
     /// 右方向の矢印画像
@@ -149,6 +149,7 @@ public class RuleSceneView : MonoBehaviour
 
             completeSequence.Insert(0, charSequence); // 各文字のアニメーションを全体のシーケンスに追加
         }
+        completeSequence.SetLink(gameObject);
 
         await completeSequence.OnComplete(async () =>
         {
@@ -202,9 +203,9 @@ public class RuleSceneView : MonoBehaviour
     {
         if(slideDirection == SlideDirection.RIGHT
             && _operationInstructionView.CanvasType != DisplayCanvasType.RULE
-            && !_isChanged)
+            && !IsChanged)
         {
-            _isChanged = true;
+            IsChanged = true;
 
             ArrowActiveChange(false, false);
             _returnToMainSceneInstructionText.gameObject.SetActive(false);
@@ -229,14 +230,14 @@ public class RuleSceneView : MonoBehaviour
             ArrowActiveChange(_operationInstructionView.CanvasType != DisplayCanvasType.RULE, true);
             _returnToMainSceneInstructionText.gameObject.SetActive(true);
 
-            _isChanged = false;
+            IsChanged = false;
         }
 
         else if(slideDirection == SlideDirection.LEFT
             && _operationInstructionView.CanvasType != DisplayCanvasType.CHARACTER
-            && !_isChanged)
+            && !IsChanged)
         {
-            _isChanged = true;
+            IsChanged = true;
 
             ArrowActiveChange(false, false);
             _returnToMainSceneInstructionText.gameObject.SetActive(false);
@@ -261,7 +262,7 @@ public class RuleSceneView : MonoBehaviour
             ArrowActiveChange(true, _operationInstructionView.CanvasType != DisplayCanvasType.CHARACTER);
             _returnToMainSceneInstructionText.gameObject.SetActive(true);
 
-            _isChanged = false;
+            IsChanged = false;
         }
 
     }

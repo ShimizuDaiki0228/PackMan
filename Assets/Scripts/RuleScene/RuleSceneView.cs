@@ -207,6 +207,7 @@ public class RuleSceneView : MonoBehaviour
             _isChanged = true;
 
             ArrowActiveChange(false, false);
+            _returnToMainSceneInstructionText.gameObject.SetActive(false);
 
             _characterExplanationView.SlideAnimation(RuleSceneAnimationUtility.Direction.LEFT,
                                                      RuleSceneAnimationUtility.LeftObjectDisplaySlide,
@@ -226,6 +227,7 @@ public class RuleSceneView : MonoBehaviour
                 = ChangeCanvasType(_operationInstructionView.CanvasType, 1);
 
             ArrowActiveChange(_operationInstructionView.CanvasType != DisplayCanvasType.RULE, true);
+            _returnToMainSceneInstructionText.gameObject.SetActive(true);
 
             _isChanged = false;
         }
@@ -237,6 +239,7 @@ public class RuleSceneView : MonoBehaviour
             _isChanged = true;
 
             ArrowActiveChange(false, false);
+            _returnToMainSceneInstructionText.gameObject.SetActive(false);
 
             _characterExplanationView.SlideAnimation(RuleSceneAnimationUtility.Direction.RIGHT,
                                                      -RuleSceneAnimationUtility.LeftObjectDisplaySlide,
@@ -256,6 +259,7 @@ public class RuleSceneView : MonoBehaviour
                 = ChangeCanvasType(_operationInstructionView.CanvasType, -1);
 
             ArrowActiveChange(true, _operationInstructionView.CanvasType != DisplayCanvasType.CHARACTER);
+            _returnToMainSceneInstructionText.gameObject.SetActive(true);
 
             _isChanged = false;
         }

@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -58,6 +59,12 @@ public class RuleSceneView : MonoBehaviour
     private CanvasGroup _rightArrowCanvasGroup;
 
     /// <summary>
+    /// 右矢印の何をクリックしたらいいかを表示するテキスト
+    /// </summary>
+    [SerializeField]
+    private TextMeshProUGUI _rightArrowInstructionText;
+
+    /// <summary>
     /// 左方向の矢印画像
     /// </summary>
     [SerializeField]
@@ -68,6 +75,12 @@ public class RuleSceneView : MonoBehaviour
     /// </summary>
     [SerializeField]
     private CanvasGroup _leftArrowCanvasGroup;
+
+    /// <summary>
+    /// 左矢印の何をクリックしたらいいかを表示するテキスト
+    /// </summary>
+    [SerializeField]
+    private TextMeshProUGUI _leftArrowInstructionText;
 
     /// <summary>
     /// 初期化
@@ -100,7 +113,11 @@ public class RuleSceneView : MonoBehaviour
                                                       RuleSceneAnimationUtility.LeftArrowMovePositionOffset,
                                                       gameObject);
 
-        
+        RuleSceneAnimationUtility.InstructionTextAnimation(_rightArrowInstructionText,
+                                                           new Vector2(0, 50));
+
+        RuleSceneAnimationUtility.InstructionTextAnimation(_leftArrowInstructionText,
+                                                           new Vector2(0, 50));
     }
 
     /// <summary>
@@ -227,6 +244,9 @@ public class RuleSceneView : MonoBehaviour
     private void ArrowActiveChange(bool rightActive, bool leftActive)
     {
         _rightArrowImage.gameObject.SetActive(rightActive);
+        _rightArrowInstructionText.gameObject.SetActive(rightActive);
+
         _leftArrowImage.gameObject.SetActive(leftActive);
+        _leftArrowInstructionText.gameObject.SetActive(leftActive);
     }
 }

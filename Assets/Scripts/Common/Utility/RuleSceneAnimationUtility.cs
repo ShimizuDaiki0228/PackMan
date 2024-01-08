@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 /// <summary>
@@ -114,6 +115,16 @@ public static class RuleSceneAnimationUtility
             .SetLink(linkObject);
 
         return sequence;
+    }
+
+    public static Tween InstructionTextAnimation(TextMeshProUGUI text,
+                                                    Vector2 positionOffset)
+    {
+        Tween tween = text.rectTransform.DOLocalMove(text.rectTransform.anchoredPosition + positionOffset, 1f)
+            .SetEase(Ease.OutCirc)
+            .SetLoops(-1, LoopType.Yoyo);
+
+        return tween;
     }
 
     /// <summary>

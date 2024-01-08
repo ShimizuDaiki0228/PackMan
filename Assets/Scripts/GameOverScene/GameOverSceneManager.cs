@@ -116,6 +116,8 @@ public class GameOverSceneManager : MonoBehaviour
         // すべてのTweenが完了するまで待機
         await UniTask.WhenAll(tween1.ToUniTask(), tween2.ToUniTask(), tween3.ToUniTask(), tween4.ToUniTask(), tween5.ToUniTask());
 
+        //スコアとレベルを順番に表示する
+        //値は1文字ずつ表示するように
         _scoreText.text = GameManager.Instance.Score.ToString();
         Tween tween = AnimationUtility.TextDisplayInOrder(_scoreText,
                                             _scoreText.text.Length / 2,
@@ -132,6 +134,7 @@ public class GameOverSceneManager : MonoBehaviour
 
         await tween.ToUniTask();
 
+        //メインシーンに戻る指示テキストを表示
         UIUtility.ChangeTextTransparent(_instructionText, 1f);
 
         _highScoreStringText.gameObject.SetActive(true);

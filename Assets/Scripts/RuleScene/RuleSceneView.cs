@@ -83,6 +83,12 @@ public class RuleSceneView : MonoBehaviour
     private TextMeshProUGUI _leftArrowInstructionText;
 
     /// <summary>
+    /// メインシーンに戻る指示テキスト
+    /// </summary>
+    [SerializeField]
+    private TextMeshProUGUI _returnToMainSceneInstructionText;
+
+    /// <summary>
     /// 初期化
     /// </summary>
     public void Initialize()
@@ -93,9 +99,13 @@ public class RuleSceneView : MonoBehaviour
 
         
         ArrowImageSetUp();
+        InstructionTextSetUp();
         SetEvent();
     }
 
+    /// <summary>
+    /// 矢印画像の初期設定
+    /// </summary>
     private void ArrowImageSetUp()
     {
         _rightArrowCanvasGroup.alpha = 0;
@@ -118,6 +128,34 @@ public class RuleSceneView : MonoBehaviour
 
         RuleSceneAnimationUtility.InstructionTextAnimation(_leftArrowInstructionText,
                                                            new Vector2(0, 50));
+    }
+
+    /// <summary>
+    /// 指示テキストの初期設定
+    /// </summary>
+    private async UniTask InstructionTextSetUp()
+    {
+        DOTweenTMPAnimator tmproAnimator = new DOTweenTMPAnimator(_returnToMainSceneInstructionText);
+        Sequence completeSequence = DOTween.Sequence();
+
+        for (int i = 0; i < tmproAnimator.textInfo.characterCount; i++)
+        {
+            Vector3 curCharOffset = tmproAnimator.GetCharOffset(i);
+
+            Sequence charSequence = DOTween.Sequence()
+                .Append(tmproAnimator.DOOffsetChar(i, curCharOffset + new Vector3(0, 30, 0), 0.4f)
+                .SetEase(Ease.OutFlash, 2))
+                .SetDelay(0.07f * i);
+
+            completeSequence.Insert(0, charSequence); // 各文字のアニメーションを全体のシーケンスに追加
+        }
+
+        await completeSequence.OnComplete(async () =>
+        {
+
+            await UniTask.WaitForSeconds(2);
+            InstructionTextSetUp().Forget();
+        });
     }
 
     /// <summary>

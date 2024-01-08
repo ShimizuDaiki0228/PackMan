@@ -1733,7 +1733,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: --- Click Space Key ---
+  m_Text: --- Click Space Key To Return To Main Scene ---
 --- !u!222 &1878272267
 CanvasRenderer:
   m_ObjectHideFlags: 0

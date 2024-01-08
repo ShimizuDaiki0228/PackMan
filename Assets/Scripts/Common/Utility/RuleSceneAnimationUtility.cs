@@ -121,8 +121,8 @@ public static class RuleSceneAnimationUtility
                                                     Vector2 positionOffset)
     {
         Tween tween = text.rectTransform.DOLocalMove(text.rectTransform.anchoredPosition + positionOffset, 1f)
-            .SetEase(Ease.OutCirc)
-            .SetLoops(-1, LoopType.Yoyo);
+                         .SetEase(Ease.OutCirc)
+                         .SetLoops(-1, LoopType.Yoyo);
 
         return tween;
     }

@@ -42,6 +42,8 @@ public class MainScenePresenter : MonoBehaviour
     {
         _view.Initialize();
 
+        AudioManager.Instance.PlayBGM((int)BGM.MAIN);
+
         SetEvent();
     }
 

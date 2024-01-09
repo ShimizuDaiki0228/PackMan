@@ -146,6 +146,8 @@ public class MainSceneView : MonoBehaviour
         PlayButton.onClick.AsObservable()
             .Subscribe(async _ =>
             {
+                AudioManager.Instance.PlaySFX((int)SFX.BUTTONCLICK);
+
                 UndoButton(_playButtonOutlineSequence, _playButtonOutline, PlayButton.transform);
                 MonobehaviourUtility.Instance.EffectCreate(_clickEffect, PlayButton.transform.position);
 
@@ -163,6 +165,8 @@ public class MainSceneView : MonoBehaviour
         _ruleButton.onClick.AsObservable()
             .Subscribe(async _ =>
             {
+                AudioManager.Instance.PlaySFX((int)SFX.BUTTONCLICK);
+
                 UndoButton(_ruleButtonOutlineSequence, _ruleButtonOutline, _ruleButton.transform);
                 MonobehaviourUtility.Instance.EffectCreate(_clickEffect, _ruleButton.transform.position);
 

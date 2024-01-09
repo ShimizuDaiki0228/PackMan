@@ -201,6 +201,8 @@ public class RuleSceneView : MonoBehaviour
     /// </summary>
     public async UniTask CanvasSlide(SlideDirection slideDirection)
     {
+        AudioManager.Instance.PlaySFX((int)SFX.SLIDEANIMATION);
+
         if(slideDirection == SlideDirection.RIGHT
             && _operationInstructionView.CanvasType != DisplayCanvasType.RULE
             && !IsChanged)

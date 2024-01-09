@@ -185,10 +185,14 @@ public class GameOverSceneManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    async void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space) && _isNextReady)
         {
+            AudioManager.Instance.PlaySFX((int)SFX.SPACEKEYCLICK);
+
+            await UniTask.WaitForSeconds(1f);
+
             SceneManager.LoadScene("MainScene");
         }
     }

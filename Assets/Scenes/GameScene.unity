@@ -5126,6 +5126,7 @@ MonoBehaviour:
   - {fileID: 3537866715003449828}
   - {fileID: 3492979508240363635}
   _ghostManager: {fileID: 574582782}
+  _pickupItemSpawner: {fileID: 1127671282}
   _audioSource: {fileID: 715945243}
   _enemyWalkSFX: {fileID: 8300000, guid: 1aad097b19bd7b4458a8bb378ff6525b, type: 3}
   _startSFX: {fileID: 8300000, guid: a4d41c5336f016c4787e72a76c0addcb, type: 3}
@@ -7609,7 +7610,7 @@ GameObject:
   - component: {fileID: 1127671281}
   - component: {fileID: 1127671282}
   m_Layer: 0
-  m_Name: Pickups
+  m_Name: PickupItemSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -18,11 +18,16 @@ public class PickupItemSpawner : MonoBehaviour
     /// </summary>
     private List<GameObject> _pickupItemList = new List<GameObject>();
 
+    /// <summary>
+    /// インスタンス化されたアイテム
+    /// </summary>
+    private GameObject _instanceItemObject;
+
     private CancellationTokenSource _cancellationTokenSource;
 
 
     // Start is called before the first frame update
-    void Start()
+    public void Initialize()
     {
         _cancellationTokenSource = new CancellationTokenSource();
         SpawnItem(_cancellationTokenSource.Token).Forget();
@@ -41,10 +46,10 @@ public class PickupItemSpawner : MonoBehaviour
 
             if (_pickupItemList == null || _pickupItemList.Count == 0)
                 return;
-            
 
+            Destroy(_instanceItemObject);
             int num = Random.Range(0, _pickupItemList.Count);
-            Instantiate(_pickupItemList[num], transform.position, Quaternion.identity);
+            _instanceItemObject = Instantiate(_pickupItemList[num], transform.position, Quaternion.identity);
         }
     }
 
@@ -58,5 +63,11 @@ public class PickupItemSpawner : MonoBehaviour
     {
         // シーンがアンロードされたときにキャンセルトークンをキャンセルする
         _cancellationTokenSource.Cancel();
+    }
+
+
+    public void Reset()
+    {
+        Destroy(_instanceItemObject);
     }
 }

@@ -32,6 +32,12 @@ public class InGamePresenter : MonoBehaviour
     private GhostManager _ghostManager;
 
     /// <summary>
+    /// アイテムスポナー
+    /// </summary>
+    [SerializeField]
+    private PickupItemSpawner _pickupItemSpawner;
+
+    /// <summary>
     /// オーディオソース
     /// </summary>
     [SerializeField]
@@ -67,6 +73,8 @@ public class InGamePresenter : MonoBehaviour
     private async void Start()
     {
         await _view.Initialize();
+
+        _pickupItemSpawner.Initialize();
 
         _enemyWalkSFXLenght = _enemyWalkSFX.length;
 
@@ -135,6 +143,7 @@ public class InGamePresenter : MonoBehaviour
     private void Reset()
     {
         _view.ResetView();
+        _pickupItemSpawner.Reset();
 
         _lastEnemyWalkSFXTime = 0;
     }

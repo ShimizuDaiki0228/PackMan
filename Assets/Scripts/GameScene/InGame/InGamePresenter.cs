@@ -64,9 +64,9 @@ public class InGamePresenter : MonoBehaviour
     /// </summary>
     private bool _isStart;
 
-    private void Start()
+    private async void Start()
     {
-        _view.Initialize();
+        await _view.Initialize();
 
         _enemyWalkSFXLenght = _enemyWalkSFX.length;
 

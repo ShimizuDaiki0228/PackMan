@@ -6,6 +6,9 @@ using UnityEngine.UI;
 using UniRx;
 using Cysharp.Threading.Tasks;
 using UnityEditor;
+using TMPro;
+using System;
+using DG.Tweening;
 
 public class InGameView : MonoBehaviour
 {
@@ -35,13 +38,67 @@ public class InGameView : MonoBehaviour
     public IReadOnlyReactiveProperty<bool> CanStartProp => _canStartProp;
 
     /// <summary>
+    /// ローディングCanvasGroup
+    /// </summary>
+    [SerializeField]
+    private CanvasGroup _loadingCanvas;
+
+    /// <summary>
+    /// ローディング中のテキスト
+    /// </summary>
+    [SerializeField]
+    private TextMeshProUGUI _loadingText;
+
+    /// <summary>
+    /// ローディングを終えてゲーム画面に移っているかどうか
+    /// </summary>
+    private bool _isReady;
+
+    /// <summary>
     /// 初期化
     /// </summary>
-    public void Initialize()
+    public async UniTask Initialize()
     {
+        await LoadDisplay();
+
+        _isReady = true;
         ResetView();
 
         SetEvent();
+    }
+
+    /// <summary>
+    /// ゲームが始まる前にロード画面を表示する
+    /// </summary>
+    private async UniTask LoadDisplay()
+    {
+        _loadingCanvas.gameObject.SetActive(true);
+
+        StartTextAnimation().Forget();
+
+        await UniTask.WaitForSeconds(3f);
+
+        _loadingText.gameObject.SetActive(false);
+
+        await _loadingCanvas.DOFade(0, 1.0f).ToUniTask();
+    }
+
+    /// <summary>
+    /// "Now Loading..."の"..."の数を動的に変更する
+    /// </summary>
+    /// <returns></returns>
+    private async UniTaskVoid StartTextAnimation()
+    {
+        int dotsCount = 0;
+        while (!_isReady) // 無限ループ
+        {
+            _loadingText.text = "Now Loading";
+            _loadingText.text += new string('.', dotsCount);
+            await UniTask.Delay(TimeSpan.FromSeconds(0.3));
+
+
+            dotsCount = (dotsCount + 1) % 4;
+        }
     }
 
     /// <summary>

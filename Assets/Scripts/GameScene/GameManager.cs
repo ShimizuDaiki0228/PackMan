@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
 
         _scoreProp = new ReactiveProperty<int>(0);
         _levelProp = new ReactiveProperty<int>(1);
-        _lifesProp = new ReactiveProperty<int>(1);
+        _lifesProp = new ReactiveProperty<int>(2);
 
         HighScore = PlayerPrefs.GetInt("HighScore", 0);
     }
